@@ -10,3 +10,15 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
+
+class HomeBottomBar extends StatefulWidget {
+  @override
+  _HomeBottomBarState createState() => _HomeBottomBarState();
+}
+
+class _HomeBottomBarState extends State<HomeBottomBar> {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
