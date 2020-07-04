@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'home_screen.dart';
+import 'top_screen.dart';
 
 class SignUpScreen extends StatelessWidget {
   @override
@@ -47,7 +47,7 @@ class SignUpScreen extends StatelessWidget {
                   context,
                   MaterialPageRoute<void>(
                     builder: (context) {
-                      return HomeScreen();
+                      return TopScreen();
                     },
                   ),
                 );
