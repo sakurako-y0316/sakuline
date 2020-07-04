@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -8,17 +13,5 @@ class HomeScreen extends StatelessWidget {
         title: Text('ホーム'),
       ),
     );
-  }
-}
-
-class HomeBottomBar extends StatefulWidget {
-  @override
-  _HomeBottomBarState createState() => _HomeBottomBarState();
-}
-
-class _HomeBottomBarState extends State<HomeBottomBar> {
-  @override
-  Widget build(BuildContext context) {
-    return Container();
   }
 }
