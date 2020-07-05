@@ -20,16 +20,31 @@ class TalkScreen extends StatelessWidget {
                     itemBuilder: (context, index) {
                       return GestureDetector(
                         onLongPress: () async {
-                          print('押されました');
-                          await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  fullscreenDialog: true,
-                                  builder: (context) {
-                                    return deleteAlert(context, model,
-                                        model.talkList[index].uid);
-                                  }));
-                          print('帰ってきました');
+                          await showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('トークの削除'),
+                                content: Text('トークを削除してもよろしいですか？'),
+                                actions: <Widget>[
+                                  FlatButton(
+                                    child: Text('キャンセル'),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                  FlatButton(
+                                    child: Text('削除'),
+                                    onPressed: () async {
+                                      await model.deleteTalk(
+                                          model.talkList[index].uid);
+                                      Navigator.pop(context);
+                                    },
+                                  )
+                                ],
+                              );
+                            },
+                          );
                           model.fetch();
                         },
                         child: Container(
@@ -85,31 +100,6 @@ class TalkScreen extends StatelessWidget {
             );
           },
         ));
-  }
-
-  Widget deleteAlert(
-      BuildContext context, TalkScreenViewMdoel model, String uid) {
-    print('下に来ました');
-
-    return AlertDialog(
-      title: Text('トークの削除'),
-      content: Text('トークを削除してもよろしいですか？'),
-      actions: <Widget>[
-        FlatButton(
-          child: Text('キャンセル'),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        FlatButton(
-          child: Text('削除'),
-          onPressed: () async {
-            await model.deleteTalk(uid);
-            Navigator.pop(context);
-          },
-        )
-      ],
-    );
   }
 }
 
