@@ -18,37 +18,67 @@ class TalkScreen extends StatelessWidget {
                 child: ListView.builder(
                     itemCount: model.talkList.length,
                     itemBuilder: (context, index) {
-                      return Container(
-                        padding: EdgeInsets.fromLTRB(0, 20, 20, 0),
-                        child: Center(
-                            child: Align(
-                                alignment: Alignment.centerRight,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: <Widget>[
-                                    Container(
-                                      child: Text(
-                                        DateFormat('HH: MM')
-                                            .format(
-                                                model.talkList[index].createdAt)
-                                            .toString(),
-                                        style:
-                                            TextStyle(color: Colors.grey[500]),
+                      return GestureDetector(
+                        onLongPress: () async {
+                          await showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('トークの削除'),
+                                content: Text('トークを削除してもよろしいですか？'),
+                                actions: <Widget>[
+                                  FlatButton(
+                                    child: Text('キャンセル'),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                  FlatButton(
+                                    child: Text('削除'),
+                                    onPressed: () async {
+                                      await model.deleteTalk(
+                                          model.talkList[index].uid);
+                                      Navigator.pop(context);
+                                    },
+                                  )
+                                ],
+                              );
+                            },
+                          );
+                          model.fetch();
+                        },
+                        child: Container(
+                          padding: EdgeInsets.fromLTRB(0, 20, 20, 0),
+                          child: Center(
+                              child: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: <Widget>[
+                                      Container(
+                                        child: Text(
+                                          DateFormat('HH: MM')
+                                              .format(model
+                                                  .talkList[index].createdAt)
+                                              .toString(),
+                                          style: TextStyle(
+                                              color: Colors.grey[500]),
+                                        ),
                                       ),
-                                    ),
-                                    SizedBox(width: 5),
-                                    Container(
-                                      padding: EdgeInsets.all(12),
-                                      width: 150,
-                                      color: Colors.lightGreen[600],
-                                      child: Text(
-                                        model.talkList[index].talk,
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                    )
-                                  ],
-                                ))),
+                                      SizedBox(width: 5),
+                                      Container(
+                                        padding: EdgeInsets.all(7),
+                                        width: 150,
+                                        color: Colors.lightGreen[600],
+                                        child: Text(
+                                          model.talkList[index].talk,
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      )
+                                    ],
+                                  ))),
+                        ),
                       );
                     }),
               ),
@@ -63,7 +93,7 @@ class TalkScreen extends StatelessWidget {
                       ),
                     ),
                   );
-                  await model.fetch();
+                  model.fetch();
                 },
                 child: Icon(Icons.add),
               ),
@@ -98,6 +128,7 @@ class AddTalk extends StatelessWidget {
                 ),
                 onPressed: () async {
                   await model.addTalk();
+                  model.fetch();
                   Navigator.pop(context);
                 },
               )
