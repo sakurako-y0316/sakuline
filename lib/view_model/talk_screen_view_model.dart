@@ -22,17 +22,29 @@ class TalkScreenViewMdoel extends ChangeNotifier {
         .map((doc) => Talk(
               createdAt: doc.data['createdAt'].toDate(),
               talk: doc.data['talk'],
+              uid: doc.data['uid'],
             ))
         .toList();
     this.talkList = talkList;
     notifyListeners();
   }
 
+  //Talkの追加
   addTalk() async {
     String random = randomAlphaNumeric(20);
+    Timestamp date = Timestamp.now();
     await talkCollection
         .document(random)
-        .setData({'createdAt': Timestamp.now(), 'talk': talk, 'uid': random});
+        .setData({'createdAt': date, 'talk': talk, 'uid': random});
+    notifyListeners();
+  }
+
+  //Talkの削除
+  deleteTalk(String uid) async {
+    print('処理を始めます');
+    print(uid);
+    await talkCollection.document(uid).delete();
+    print('削除完了');
     notifyListeners();
   }
 }
