@@ -39,36 +39,24 @@ class _TopScreenState extends State<TopScreen> {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        fixedColor: Colors.cyan,
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: Colors.brown,
+        unselectedItemColor: Colors.red[100],
         currentIndex: page,
         onTap: onTapBottomNavigation,
         items: [
           BottomNavigationBarItem(
-              icon: Icon(
-                Icons.home,
-                color: Colors.brown[200],
-              ),
+              icon: Icon(Icons.home),
               title: Text(
                 'ホーム',
               )),
+          BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('トーク')),
           BottomNavigationBarItem(
               icon: Icon(
                 Icons.home,
-                color: Colors.brown[200],
-              ),
-              title: Text('トーク')),
-          BottomNavigationBarItem(
-              icon: Icon(
-                Icons.home,
-                color: Colors.brown[200],
               ),
               title: Text('タイムライン')),
-          BottomNavigationBarItem(
-              icon: Icon(
-                Icons.home,
-                color: Colors.brown[200],
-              ),
-              title: Text('ニュース？')),
+          BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('ニュース？')),
         ],
       ),
     );
