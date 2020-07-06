@@ -6,7 +6,7 @@ class LoginScreenViewModel extends ChangeNotifier {
   String password = '';
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  Future longin() async {
+  Future login() async {
     if (mail.isEmpty) {
       throw ('メールアドレスを入力してください');
     }

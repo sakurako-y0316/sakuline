@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sakura_line/screen/login_screen.dart';
 import 'package:sakura_line/view_model/signup_screen_view_model.dart';
 
 import 'top_screen.dart';
@@ -83,18 +84,19 @@ class SignUpScreen extends StatelessWidget {
                   height: 50,
                   margin: EdgeInsets.only(left: 16, right: 16),
                   child: FlatButton(
-                      onPressed: () async {
-                        try {
-                          await viewmodel.signUp();
-                          _showDialog(context, '登録完了しました');
-                        } catch (e) {
-                          _showDialog(context, e.toString());
-                        }
-                      },
-                      child: Text(
-                        '新規登録',
-                        style: TextStyle(color: Colors.white),
-                      )),
+                    onPressed: () async {
+                      try {
+                        await viewmodel.signUp();
+                        _showDialog(context, '登録完了しました');
+                      } catch (e) {
+                        _showDialog(context, e.toString());
+                      }
+                    },
+                    child: Text(
+                      '新規登録',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
                 )
               ],
             ),
@@ -109,10 +111,18 @@ class SignUpScreen extends StatelessWidget {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
+            title: Text(title),
             actions: <Widget>[
               FlatButton(
                   onPressed: () {
-                    Navigator.of(context).pop();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (context) {
+                          return LoginScreen();
+                        },
+                      ),
+                    );
                   },
                   child: Text('OK'))
             ],
