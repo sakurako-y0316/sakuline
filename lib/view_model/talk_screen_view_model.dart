@@ -37,7 +37,7 @@ class TalkScreenViewModel extends ChangeNotifier {
             ))
         .toList();
     this.talkList = talkList;
-    // notifyListeners();
+    notifyListeners();
   }
 
   //Talkの追加
@@ -52,10 +52,7 @@ class TalkScreenViewModel extends ChangeNotifier {
 
   //Talkの削除
   deleteTalk(String uid) async {
-    print('処理を始めます');
-    print(uid);
     await talkCollection.document(uid).delete();
-    print('削除完了');
     notifyListeners();
   }
 }
