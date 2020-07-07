@@ -5,16 +5,24 @@ import 'package:random_string/random_string.dart';
 import 'package:sakura_line/model/talk_model.dart';
 
 class TalkScreenViewModel extends ChangeNotifier {
-  //disposeエラー対策
-  bool _mounted = false;
-  bool get mounted => _mounted;
+  //------------------------
+  // disposeのエラー問題解決
+  //------------------------
+  bool _mounted = true;
 
-  //disposeエラー対策
+  @override
+  void notifyListeners() {
+    if (_mounted) super.notifyListeners();
+  }
+
   @override
   void dispose() {
+    _mounted = false;
     super.dispose();
-    _mounted = true;
   }
+  //------------------------
+  // ↑↑ここまで
+  //------------------------
 
   List<Talk> talkList = [];
   String talk;
