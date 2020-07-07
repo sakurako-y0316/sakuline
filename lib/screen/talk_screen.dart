@@ -6,9 +6,9 @@ import 'package:sakura_line/view_model/talk_screen_view_model.dart';
 class TalkScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-        create: (_) => TalkScreenViewModoel()..fetch(),
-        child: Consumer<TalkScreenViewModoel>(
+    return ChangeNotifierProvider<TalkScreenViewModel>(
+        create: (_) => TalkScreenViewModel()..fetch(),
+        child: Consumer<TalkScreenViewModel>(
           builder: (context, model, child) {
             return Scaffold(
               appBar: AppBar(
@@ -104,7 +104,7 @@ class TalkScreen extends StatelessWidget {
 }
 
 class AddTalk extends StatelessWidget {
-  final TalkScreenViewModoel model;
+  final TalkScreenViewModel model;
 
   const AddTalk({this.model});
 

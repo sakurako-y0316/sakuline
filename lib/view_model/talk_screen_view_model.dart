@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+
 import 'package:random_string/random_string.dart';
 import 'package:sakura_line/model/talk_model.dart';
 
-class TalkScreenViewMdoel extends ChangeNotifier {
+class TalkScreenViewModel extends ChangeNotifier {
   //disposeエラー対策
   bool _mounted = false;
   bool get mounted => _mounted;
@@ -19,7 +19,7 @@ class TalkScreenViewMdoel extends ChangeNotifier {
   List<Talk> talkList = [];
   String talk;
 
-  TalkScreenViewMdoel() {
+  TalkScreenViewModel() {
     fetch();
   }
 
