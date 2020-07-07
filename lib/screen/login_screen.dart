@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sakura_line/screen/home_screen.dart';
 import 'package:sakura_line/screen/signup_screen.dart';
+import 'package:sakura_line/screen/top_screen.dart';
 import 'package:sakura_line/view_model/login_screen_view_model.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -118,12 +119,12 @@ class LoginScreen extends StatelessWidget {
                       context,
                       MaterialPageRoute<void>(
                         builder: (context) {
-                          return HomeScreen();
+                          return TopScreen();
                         },
                       ),
                     );
                   },
-                  child: Text('OK'))
+                  child: Text('OK')),
             ],
           );
         });

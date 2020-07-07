@@ -26,7 +26,7 @@ class TalkScreenViewMdoel extends ChangeNotifier {
             ))
         .toList();
     this.talkList = talkList;
-    notifyListeners();
+    // notifyListeners();
   }
 
   //Talkの追加

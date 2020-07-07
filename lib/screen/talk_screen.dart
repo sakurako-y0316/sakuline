@@ -7,8 +7,8 @@ class TalkScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-        create: (_) => TalkScreenViewMdoel()..fetch(),
-        child: Consumer<TalkScreenViewMdoel>(
+        create: (_) => TalkScreenViewModoel()..fetch(),
+        child: Consumer<TalkScreenViewModoel>(
           builder: (context, model, child) {
             return Scaffold(
               appBar: AppBar(
@@ -104,7 +104,7 @@ class TalkScreen extends StatelessWidget {
 }
 
 class AddTalk extends StatelessWidget {
-  final TalkScreenViewMdoel model;
+  final TalkScreenViewModoel model;
 
   const AddTalk({this.model});
 

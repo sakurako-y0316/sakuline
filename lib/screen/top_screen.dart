@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sakura_line/screen/home_screen.dart';
-import 'package:sakura_line/screen/news_screen.dart';
+import 'package:sakura_line/screen/todo_list.dart';
+
 import 'package:sakura_line/screen/talk_screen.dart';
 import 'package:sakura_line/screen/timeline_screen.dart';
 
@@ -35,7 +36,7 @@ class _TopScreenState extends State<TopScreen> {
           HomeScreen(),
           TalkScreen(),
           TimeLine(),
-          NewsScreen(),
+          ToDoList(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -56,7 +57,8 @@ class _TopScreenState extends State<TopScreen> {
                 Icons.home,
               ),
               title: Text('タイムライン')),
-          BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('ニュース？')),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.home), title: Text('TODOリスト')),
         ],
       ),
     );
