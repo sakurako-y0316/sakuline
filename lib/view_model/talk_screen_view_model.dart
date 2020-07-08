@@ -26,6 +26,8 @@ class TalkScreenViewModel extends ChangeNotifier {
 
   List<Talk> talkList = [];
   String talk;
+  String fromUserName;
+  String toUserName;
 
   TalkScreenViewModel() {
     fetch();
@@ -42,20 +44,37 @@ class TalkScreenViewModel extends ChangeNotifier {
               createdAt: doc.data['createdAt'].toDate(),
               talk: doc.data['talk'],
               uid: doc.data['uid'],
+              toUserName: doc.data['toUserName'],
+              fromUserName: doc.data['fromUserName'],
             ))
         .toList();
     this.talkList = talkList;
     notifyListeners();
   }
 
+  whoSendTalk() {}
+
   //Talkの追加
   addTalk() async {
     String random = randomAlphaNumeric(20);
     Timestamp date = Timestamp.now();
-    await talkCollection
-        .document(random)
-        .setData({'createdAt': date, 'talk': talk, 'uid': random});
+    _toUserName();
+    await talkCollection.document(random).setData({
+      'createdAt': date,
+      'talk': talk,
+      'uid': random,
+      'fromUserName': fromUserName,
+      'toUserName': toUserName,
+    });
     notifyListeners();
+  }
+
+  String _toUserName() {
+    if (fromUserName == 'shogo') {
+      toUserName = 'sakurako';
+    } else {
+      toUserName = 'shogo';
+    }
   }
 
   //Talkの削除
