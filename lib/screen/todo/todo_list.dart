@@ -26,7 +26,18 @@ class ToDoList extends StatelessWidget {
                         Text(todo.title),
                         IconButton(
                           icon: Icon(Icons.edit),
-                          onPressed: () {},
+                          onPressed: () async {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute<void>(
+                                builder: (context) {
+                                  return AddToDoScreen(todo: todo);
+                                },
+                                fullscreenDialog: true,
+                              ),
+                            );
+                            viewmodel.fetchtodos();
+                          },
                         )
                       ],
                     ),

@@ -24,9 +24,11 @@ class AddToDoViewModel extends ChangeNotifier {
   Future updateToDo(ToDo todo) async {
     final document =
         Firestore.instance.collection('todo').document(todo.documentID);
-    await document.updateData({
-      'title': todoTitle,
-      'updateAt': Timestamp.now(),
-    });
+    await document.updateData(
+      {
+        'title': todoTitle,
+        'updateAt': Timestamp.now(),
+      },
+    );
   }
 }
