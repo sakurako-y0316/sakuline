@@ -41,5 +41,13 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+
+ 	<!-- video_player-->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+  		<key>NSAllowsArbitraryLoads</key>
+  		<true/>
+	</dict>
+
 </dict>
 </plist>
