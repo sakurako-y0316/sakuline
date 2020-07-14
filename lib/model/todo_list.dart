@@ -1,11 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class ToDo {
-  ToDo(DocumentSnapshot doc) {
-    documentID = doc.documentID;
-    title = doc['title'];
-  }
+  final String documentID;
+  final String title;
+  final String images;
 
-  String documentID;
-  String title;
+  ToDo({this.documentID, this.title, this.images});
 }
