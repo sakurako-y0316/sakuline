@@ -24,13 +24,19 @@ class ToDoListViewModel extends ChangeNotifier {
 
   //modelと同じ名前ToDo
   List<ToDo> todos = [];
-  String todoTitle = '';
+
 //コレクションごと取ってきている
   Future fetchtodos() async {
-    final docs = await Firestore.instance.collection('todo').getDocuments();
-    final todos = docs.documents.map((doc) => ToDo(doc)).toList();
-    this.todos = todos;
+    QuerySnapshot snapshot =
+        await Firestore.instance.collection('todo').getDocuments();
+    //データ取り出し
 
+    List<ToDo> todos = snapshot.documents
+        .map(
+          (doc) => ToDo(title: doc.data['title'], images: doc.data['images']),
+        )
+        .toList();
+    this.todos = todos;
     notifyListeners();
   }
 

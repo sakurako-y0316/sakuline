@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sakura_line/screen/home/home_screen.dart';
 import 'package:sakura_line/screen/signup_screen.dart';
 import 'package:sakura_line/screen/top_screen.dart';
 import 'package:sakura_line/view_model/login_screen_view_model.dart';
