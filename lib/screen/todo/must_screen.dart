@@ -10,9 +10,6 @@ class MustScreen extends StatelessWidget {
     return ChangeNotifierProvider<ToDoListViewModel>(
       create: (_) => ToDoListViewModel()..fetchtodos(),
       child: Scaffold(
-        appBar: AppBar(
-          title: Text('やっておく事'),
-        ),
         body: Consumer<ToDoListViewModel>(
           builder: (context, viewmodel, child) {
             final todos = viewmodel.todos;

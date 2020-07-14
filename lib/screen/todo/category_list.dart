@@ -4,12 +4,6 @@ import 'package:sakura_line/screen/todo/todo_list.dart';
 import 'package:sakura_line/view_model/todo_list_view_model.dart';
 
 class CategoryList extends StatelessWidget {
-  final photItem = [
-    'lib/assets/images/canp.jpg',
-    'lib/assets/images/travel.jpg'
-  ];
-
-  final purpose = ['キャンプ', '旅行'];
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<ToDoListViewModel>(
@@ -50,6 +44,18 @@ class CategoryList extends StatelessWidget {
                     viewmodel.todos.length,
                     (index) {
                       return InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute<void>(
+                              builder: (context) {
+                                return ToDoList(
+                                  title: viewmodel.todos[index].title,
+                                );
+                              },
+                            ),
+                          );
+                        },
                         child: Card(
                           child: Column(
                             children: <Widget>[
