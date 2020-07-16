@@ -3,15 +3,47 @@ import 'package:flutter/material.dart';
 import 'package:sakura_line/model/todo_list.dart';
 
 class ToDoListViewModel extends ChangeNotifier {
+  //------------------------
+  // disposeのエラー問題解決
+  //------------------------
+  bool _mounted = true;
+
+  @override
+  void notifyListeners() {
+    if (_mounted) super.notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _mounted = false;
+    super.dispose();
+  }
+  //------------------------
+  // ↑↑ここまで
+  //------------------------
+
   //modelと同じ名前ToDo
   List<ToDo> todos = [];
 
+//コレクションごと取ってきている
   Future fetchtodos() async {
-    final docs = await Firestore.instance.collection('todo').getDocuments();
-    final todos = docs.documents.map((doc) => ToDo(doc)).toList();
+    QuerySnapshot snapshot =
+        await Firestore.instance.collection('todo').getDocuments();
+    //データ取り出し
+
+    List<ToDo> todos = snapshot.documents
+        .map(
+          (doc) => ToDo(title: doc.data['title'], images: doc.data['images']),
+        )
+        .toList();
     this.todos = todos;
-    print("チェック1：${todos[0].title}");
-    print("チェック2：${this.todos[0].title}");
     notifyListeners();
+  }
+
+  Future deleteToDo(ToDo todo) async {
+    await Firestore.instance
+        .collection('todo')
+        .document(todo.documentID)
+        .delete();
   }
 }

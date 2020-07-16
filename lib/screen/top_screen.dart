@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:sakura_line/screen/home_screen.dart';
-import 'package:sakura_line/screen/todo_list.dart';
+import 'package:sakura_line/screen/home/home_screen.dart';
 
 import 'package:sakura_line/screen/talk_screen.dart';
 import 'package:sakura_line/screen/timeline_screen.dart';
+import 'package:sakura_line/screen/todo/category_list.dart';
+import 'package:sakura_line/screen/todo/todo_list.dart';
 
 class TopScreen extends StatefulWidget {
   @override
@@ -36,7 +37,7 @@ class _TopScreenState extends State<TopScreen> {
           HomeScreen(),
           TalkScreen(),
           TimeLine(),
-          ToDoList(),
+          CategoryList(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
