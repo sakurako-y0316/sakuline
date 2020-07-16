@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:sakura_line/view_model/videonote_view_model.dart';
+
 import 'package:video_player/video_player.dart';
 
-class VideoNote extends StatefulWidget {
+class VideoApp extends StatefulWidget {
   @override
-  _VideoNoteState createState() => _VideoNoteState();
+  _VideoAppState createState() => _VideoAppState();
 }
 
-class _VideoNoteState extends State<VideoNote> {
+class _VideoAppState extends State<VideoApp> {
   VideoPlayerController _controller;
 
   @override
@@ -24,43 +23,39 @@ class _VideoNoteState extends State<VideoNote> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<VideoNoteViewModel>(
-      create: (_) => VideoNoteViewModel()..fetch(),
-      child: MaterialApp(
-        title: 'Video Demo',
-        home: Consumer<VideoNoteViewModel>(
-          builder:
-              (BuildContext context, VideoNoteViewModel model, Widget child) {
-            return Scaffold(
-              appBar: AppBar(
-                title: Text('動画のテスト'),
-              ),
-              body: Center(
-                child: model.controller.value.initialized
-                    ? AspectRatio(
-                        aspectRatio: _controller.value.aspectRatio,
-                        child: VideoPlayer(model.controller),
-                      )
-                    : Container(),
-              ),
-              floatingActionButton: FloatingActionButton(
-                onPressed: () {
-                  setState(() {
-                    model.controller.value.isPlaying
-                        ? model.controller.pause()
-                        : model.controller.play();
-                  });
-                },
-                child: Icon(
-                  model.controller.value.isPlaying
-                      ? Icons.pause
-                      : Icons.play_arrow,
-                ),
-              ),
-            );
+    return MaterialApp(
+      title: 'Video Demo',
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('動画プレイヤー'),
+        ),
+        body: Center(
+          child: _controller.value.initialized
+              ? AspectRatio(
+                  aspectRatio: _controller.value.aspectRatio,
+                  child: VideoPlayer(_controller),
+                )
+              : Container(),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            setState(() {
+              _controller.value.isPlaying
+                  ? _controller.pause()
+                  : _controller.play();
+            });
           },
+          child: Icon(
+            _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
+          ),
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
   }
 }

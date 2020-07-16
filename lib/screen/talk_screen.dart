@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:sakura_line/screen/test.dart';
 import 'package:sakura_line/screen/videonote.dart';
 
 import 'package:sakura_line/view_model/talk_screen_view_model.dart';
@@ -18,13 +19,25 @@ class TalkScreen extends StatelessWidget {
                 actions: <Widget>[
                   IconButton(
                     icon: Icon(
+                      Icons.camera,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return Test();
+                      }));
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(
                       Icons.videocam,
                       color: Colors.white,
                     ),
                     onPressed: () {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) {
-                        return VideoNote();
+                        return VideoApp();
                       }));
                     },
                   ),
