@@ -47,15 +47,15 @@ class _TopScreenState extends State<TopScreen> {
         currentIndex: page,
         onTap: onTapBottomNavigation,
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('ホーム')),
-          BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('トーク')),
+          BottomNavigationBarItem(icon: Icon(Icons.face), title: Text('マイベージ')),
+          BottomNavigationBarItem(icon: Icon(Icons.send), title: Text('トーク')),
           BottomNavigationBarItem(
               icon: Icon(
-                Icons.home,
+                Icons.favorite,
               ),
               title: Text('タイムライン')),
           BottomNavigationBarItem(
-              icon: Icon(Icons.home), title: Text('TODOリスト')),
+              icon: Icon(Icons.event_available), title: Text('TODOリスト')),
         ],
       ),
     );

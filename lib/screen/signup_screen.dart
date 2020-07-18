@@ -60,28 +60,6 @@ class SignUpScreen extends StatelessWidget {
                   width: double.infinity,
                   color: Colors.brown[700],
                   height: 50,
-                  margin: EdgeInsets.only(left: 16, right: 16, bottom: 15),
-                  child: FlatButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute<void>(
-                          builder: (context) {
-                            return TopScreen();
-                          },
-                        ),
-                      );
-                    },
-                    child: Text(
-                      'スキップ',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ),
-                Container(
-                  width: double.infinity,
-                  color: Colors.brown[700],
-                  height: 50,
                   margin: EdgeInsets.only(left: 16, right: 16),
                   child: FlatButton(
                     onPressed: () async {
