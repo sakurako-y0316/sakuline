@@ -84,9 +84,6 @@ class TalkScreenViewModel extends ChangeNotifier {
             ))
         .toList();
     this.talkList = talkList;
-
-    getEmail();
-
     notifyListeners();
   }
 

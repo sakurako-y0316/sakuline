@@ -14,163 +14,140 @@ class TalkScreen extends StatelessWidget {
         create: (_) => TalkScreenViewModel()..fetch(),
         child: Consumer<TalkScreenViewModel>(
           builder: (context, model, child) {
-            print('プリントします${model.email}');
-
-            if (model.email != null) {
-              return Scaffold(
-                appBar: AppBar(
-                  title: Text('トーク'),
-                  actions: <Widget>[
-                    IconButton(
-                        icon: Icon(
-                          Icons.person,
-                          color: Colors.white,
-                        ),
-                        onPressed: () {
-                          model.logout();
-                        }),
-                    IconButton(
+            return Scaffold(
+              appBar: AppBar(
+                title: Text('トーク'),
+                actions: <Widget>[
+                  IconButton(
                       icon: Icon(
-                        Icons.camera,
+                        Icons.person,
                         color: Colors.white,
                       ),
                       onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                fullscreenDialog: true,
-                                builder: (context) {
-                                  return Test();
-                                }));
-                      },
-                    ),
-                    IconButton(
-                      icon: Icon(
-                        Icons.videocam,
-                        color: Colors.white,
-                      ),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                fullscreenDialog: true,
-                                builder: (context) {
-                                  return VideoApp();
-                                }));
-                      },
-                    ),
-                    SizedBox(
-                      width: 20,
-                    )
-                  ],
-                ),
-                body: Container(
-                  color: Colors.blue[50],
-                  child: ListView.builder(
-                      itemCount: model.talkList.length,
-                      itemBuilder: (context, index) {
-                        return GestureDetector(
-                          onLongPress: () async {
-                            await showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text('トークの削除'),
-                                  content: Text('トークを削除してもよろしいですか？'),
-                                  actions: <Widget>[
-                                    FlatButton(
-                                      child: Text('キャンセル'),
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                    ),
-                                    FlatButton(
-                                      child: Text('削除'),
-                                      onPressed: () async {
-                                        await model.deleteTalk(
-                                            model.talkList[index].uid);
-                                        Navigator.pop(context);
-                                      },
-                                    )
-                                  ],
-                                );
-                              },
-                            );
-                            model.fetch();
-                          },
-                          child: Container(
-                            padding: EdgeInsets.fromLTRB(10, 20, 20, 0),
-                            child: Center(
-                                child: Row(
-                              mainAxisAlignment:
-                                  model.talkList[index].fromUserName == 'shogo'
-                                      ? MainAxisAlignment.end
-                                      : MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: <Widget>[
-                                Container(
-                                  child: Text(
-                                    DateFormat('HH: MM')
-                                        .format(model.talkList[index].createdAt)
-                                        .toString(),
-                                    style: TextStyle(color: Colors.grey[500]),
-                                  ),
-                                ),
-                                SizedBox(width: 5),
-                                Container(
-                                  padding: EdgeInsets.all(7),
-                                  width: 150,
-                                  color: model.talkList[index].fromUserName ==
-                                          'shogo'
-                                      ? Colors.lightGreen[400]
-                                      : Colors.white,
-                                  child: Text(
-                                    model.talkList[index].talk,
-                                    style: TextStyle(color: Colors.black),
-                                  ),
-                                )
-                              ],
-                            )),
-                          ),
-                        );
+                        model.logout();
                       }),
-                ),
-                floatingActionButton: FloatingActionButton(
-                  onPressed: () async {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        fullscreenDialog: true,
-                        builder: (context) => AddTalk(
-                          model: model,
-                        ),
-                      ),
-                    );
-                    model.fetch();
-                  },
-                  child: Icon(Icons.add),
-                ),
-              );
-            } else {
-              return Container(
-                child: Center(
-                  child: FlatButton(
-                    color: Colors.blue,
+                  IconButton(
+                    icon: Icon(
+                      Icons.camera,
+                      color: Colors.white,
+                    ),
                     onPressed: () {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                               fullscreenDialog: true,
-                              builder: (context) => LoginScreen()));
+                              builder: (context) {
+                                return Test();
+                              }));
                     },
-                    child: Text(
-                      'ログイン',
-                      style: TextStyle(color: Colors.white),
-                    ),
                   ),
-                ),
-              );
-            }
+                  IconButton(
+                    icon: Icon(
+                      Icons.videocam,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              fullscreenDialog: true,
+                              builder: (context) {
+                                return VideoApp();
+                              }));
+                    },
+                  ),
+                  SizedBox(
+                    width: 20,
+                  )
+                ],
+              ),
+              body: Container(
+                color: Colors.blue[50],
+                child: ListView.builder(
+                    itemCount: model.talkList.length,
+                    itemBuilder: (context, index) {
+                      return GestureDetector(
+                        onLongPress: () async {
+                          await showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('トークの削除'),
+                                content: Text('トークを削除してもよろしいですか？'),
+                                actions: <Widget>[
+                                  FlatButton(
+                                    child: Text('キャンセル'),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                  FlatButton(
+                                    child: Text('削除'),
+                                    onPressed: () async {
+                                      await model.deleteTalk(
+                                          model.talkList[index].uid);
+                                      Navigator.pop(context);
+                                    },
+                                  )
+                                ],
+                              );
+                            },
+                          );
+                          model.fetch();
+                        },
+                        child: Container(
+                          padding: EdgeInsets.fromLTRB(10, 20, 20, 0),
+                          child: Center(
+                              child: Row(
+                            mainAxisAlignment:
+                                model.talkList[index].fromUserName == 'shogo'
+                                    ? MainAxisAlignment.end
+                                    : MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: <Widget>[
+                              Container(
+                                child: Text(
+                                  DateFormat('HH: MM')
+                                      .format(model.talkList[index].createdAt)
+                                      .toString(),
+                                  style: TextStyle(color: Colors.grey[500]),
+                                ),
+                              ),
+                              SizedBox(width: 5),
+                              Container(
+                                padding: EdgeInsets.all(7),
+                                width: 150,
+                                color: model.talkList[index].fromUserName ==
+                                        'shogo'
+                                    ? Colors.lightGreen[400]
+                                    : Colors.white,
+                                child: Text(
+                                  model.talkList[index].talk,
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                              )
+                            ],
+                          )),
+                        ),
+                      );
+                    }),
+              ),
+              floatingActionButton: FloatingActionButton(
+                onPressed: () async {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      fullscreenDialog: true,
+                      builder: (context) => AddTalk(
+                        model: model,
+                      ),
+                    ),
+                  );
+                  model.fetch();
+                },
+                child: Icon(Icons.add),
+              ),
+            );
           },
         ));
   }
@@ -196,49 +173,54 @@ class _AddTalkState extends State<AddTalk> {
 
   @override
   Widget build(BuildContext context) {
+    final _key = GlobalKey<FormState>();
+
     return Scaffold(
         appBar: AppBar(title: Text('トークを追加')),
         body: Container(
           padding: EdgeInsets.all(20),
-          child: Column(
-            children: <Widget>[
-              ListTile(
-                title: const Text('尚悟'),
-                leading: Radio(
+          child: Form(
+            key: _key,
+            child: Column(
+              children: <Widget>[
+                RadioListTile<String>(
+                  title: new Text('尚悟'),
                   value: "shogo",
                   groupValue: userName,
-                  onChanged: (val) {
-                    setName(val);
-                  },
+                  onChanged: (val) => setName(val),
                 ),
-              ),
-              ListTile(
-                title: const Text('桜子'),
-                leading: Radio(
+                RadioListTile<String>(
+                  title: new Text('桜子'),
                   value: "sakurako",
                   groupValue: userName,
-                  onChanged: (val) {
-                    setName(val);
-                  },
+                  onChanged: (val) => setName(val),
                 ),
-              ),
-              TextFormField(onChanged: (val) => widget.model.talk = val),
-              RaisedButton(
-                color: Colors.blueAccent,
-                child: Text(
-                  '送信',
-                  style: TextStyle(
-                    color: Colors.white,
-                    // fontWeight: FontWeight.bold
+                TextFormField(
+                    validator: (val) => val.isEmpty ? '入力してください' : null,
+                    onChanged: (val) => widget.model.talk = val),
+                RaisedButton(
+                  color: Colors.blueAccent,
+                  child: Text(
+                    '送信',
+                    style: TextStyle(
+                      color: Colors.white,
+                      // fontWeight: FontWeight.bold
+                    ),
                   ),
-                ),
-                onPressed: () async {
-                  await widget.model.addTalk();
-                  widget.model.fetch();
-                  Navigator.pop(context);
-                },
-              )
-            ],
+                  onPressed: () async {
+                    if (_key.currentState.validate()) {
+                      if (userName == null || userName.isEmpty) {
+                        print('お前は誰だ');
+                      } else {
+                        await widget.model.addTalk();
+                        widget.model.fetch();
+                        Navigator.pop(context);
+                      }
+                    }
+                  },
+                )
+              ],
+            ),
           ),
         ));
   }
