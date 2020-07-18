@@ -62,8 +62,11 @@ class CategoryList extends StatelessWidget {
                               Container(
                                 height: 150,
                                 width: double.infinity,
-                                child:
-                                    Image.asset(viewmodel.todos[index].images),
+                                child: viewmodel.todos[index].images == null
+                                    ? Image.asset(
+                                        'lib/assets/images/noimage.png')
+                                    : Image.asset(
+                                        viewmodel.todos[index].images),
                               ),
                               Container(
                                 child: ListTile(
