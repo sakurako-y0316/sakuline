@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreenViewModel extends ChangeNotifier {
   String mail = '';
@@ -13,10 +15,12 @@ class LoginScreenViewModel extends ChangeNotifier {
     if (password.isEmpty) {
       throw ('パスワードを入力してください');
     }
-    final result =
-        await _auth.signInWithEmailAndPassword(email: mail, password: password);
 
-    //端末に保存
-    final uid = result.user.uid;
+    notifyListeners();
+  }
+
+  Future<void> signOut() async {
+    notifyListeners();
+    return await FirebaseAuth.instance.signOut();
   }
 }
