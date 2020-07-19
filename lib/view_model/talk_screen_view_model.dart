@@ -73,8 +73,14 @@ class TalkScreenViewModel extends ChangeNotifier {
   //ドキュメント一覧を取得
   fetch() async {
     QuerySnapshot snapshot =
-        await talkCollection.orderBy('createdAt').getDocuments();
-    List<Talk> talkList = snapshot.documents
+        await talkCollection //中身はFirestore.instance.collection('talk');
+            .orderBy('createdAt') //並び替え条件
+            // .limit(3) //込み条件1
+            // .where('fromUserName', isEqualTo: 'shogo') //絞り込み条件1
+            // .where('toUserName', isEqualTo: 'shogo') //絞り込み条件2
+            // .where('toUserName', isEqualTo: 'sakurako') //絞り込み条件2
+            .getDocuments(); //QuerySnapshotを取得
+    List<Talk> talkList = snapshot.documents //DocumentSnapshotを順に取得
         .map((doc) => Talk(
               createdAt: doc.data['createdAt'].toDate(),
               talk: doc.data['talk'],
@@ -84,9 +90,6 @@ class TalkScreenViewModel extends ChangeNotifier {
             ))
         .toList();
     this.talkList = talkList;
-
-    getEmail();
-
     notifyListeners();
   }
 
