@@ -16,16 +16,7 @@ class CategoryList extends StatelessWidget {
               children: <Widget>[
                 IconButton(
                   icon: Icon(Icons.accessibility),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute<void>(
-                        builder: (context) {
-                          return ToDoList();
-                        },
-                      ),
-                    );
-                  },
+                  onPressed: () {},
                 ),
                 IconButton(
                   icon: Icon(Icons.add),
@@ -89,43 +80,3 @@ class CategoryList extends StatelessWidget {
     );
   }
 }
-// body: Consumer<ToDoListViewModel>(
-//   builder: (context, viewmodel, child) {
-//     final todos = viewmodel.todos;
-//     print('確認${todos[0].images}');
-//     print('確認${todos[1].images}');
-//     print('確認${todos[2].images}');
-//     final List<ListView> listViews = todos
-//         .map(
-//           (todo) => ListView(
-//             children: List.generate(
-//               todos.length,
-//               (index) {
-//                 return InkWell(
-//                   child: Card(
-//                     child: Column(
-//                       children: <Widget>[
-//                         Container(
-//                           width: double.infinity,
-//                           child: Image.asset(todo.images),
-//                         ),
-//                         Container(
-//                           child: ListTile(
-//                             title: Text(todo.title),
-//                             leading: Icon(Icons.add),
-//                           ),
-//                         ),
-//                       ],
-//                     ),
-//                   ),
-//                 );
-//               },
-//             ),
-//           ),
-//         )
-//         .toList();
-//     return Expanded(
-//       child: Container(child: ListView(children: listViews)),
-//     );
-//   },
-// ),
