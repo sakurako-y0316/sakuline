@@ -25,7 +25,7 @@ class ToDoListViewModel extends ChangeNotifier {
   //modelと同じ名前ToDo
   List<ToDo> todos = [];
 
-//コレクションごと取ってきている
+//コレクションごと取ってきてリストにしている
   Future fetchtodos() async {
     QuerySnapshot snapshot =
         await Firestore.instance.collection('todo').getDocuments();
@@ -45,5 +45,6 @@ class ToDoListViewModel extends ChangeNotifier {
         .collection('todo')
         .document(todo.documentID)
         .delete();
+    notifyListeners();
   }
 }

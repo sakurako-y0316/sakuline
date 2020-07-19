@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sakura_line/screen/home/home_screen.dart';
+import 'package:sakura_line/screen/home/mypage_screen.dart';
 
 import 'package:sakura_line/screen/talk_screen.dart';
 import 'package:sakura_line/screen/timeline_screen.dart';
@@ -34,7 +34,7 @@ class _TopScreenState extends State<TopScreen> {
         controller: _pageController,
         onPageChanged: onchanged,
         children: <Widget>[
-          HomeScreen(),
+          MyPageScreen(),
           TalkScreen(),
           TimeLine(),
           CategoryList(),
@@ -47,7 +47,7 @@ class _TopScreenState extends State<TopScreen> {
         currentIndex: page,
         onTap: onTapBottomNavigation,
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.face), title: Text('マイベージ')),
+          BottomNavigationBarItem(icon: Icon(Icons.face), title: Text('マイぺージ')),
           BottomNavigationBarItem(icon: Icon(Icons.send), title: Text('トーク')),
           BottomNavigationBarItem(
               icon: Icon(
