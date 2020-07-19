@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:sakura_line/screen/login_screen.dart';
 
 import 'package:sakura_line/screen/videonote.dart';
 
@@ -18,29 +17,6 @@ class TalkScreen extends StatelessWidget {
               appBar: AppBar(
                 title: Text('トーク'),
                 actions: <Widget>[
-                  IconButton(
-                      icon: Icon(
-                        Icons.person,
-                        color: Colors.white,
-                      ),
-                      onPressed: () {
-                        model.logout();
-                      }),
-                  IconButton(
-                    icon: Icon(
-                      Icons.camera,
-                      color: Colors.white,
-                    ),
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              fullscreenDialog: true,
-                              builder: (context) {
-                                return Test();
-                              }));
-                    },
-                  ),
                   IconButton(
                     icon: Icon(
                       Icons.videocam,
