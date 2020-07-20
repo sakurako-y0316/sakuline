@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import 'package:sakura_line/model/video_model.dart';
+import 'package:sakura_line/screen/loading.dart';
 import 'package:sakura_line/view_model/videonote_view_model.dart';
 
 import 'package:video_player/video_player.dart';
@@ -15,79 +16,81 @@ class VideoApp extends StatelessWidget {
     return ChangeNotifierProvider<VideoAppViewModel>(
       create: (_) => VideoAppViewModel()..fetch(),
       child: Consumer<VideoAppViewModel>(builder: (context, model, child) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Text('動画一覧'),
-            actions: <Widget>[
-              IconButton(
-                icon: Icon(Icons.refresh),
-                onPressed: () {
-                  model.fetch();
-                },
-              )
-            ],
-          ),
-          body: ListView.builder(
-            itemCount: model.videoList.length,
-            itemBuilder: (context, index) => Card(
-              child: Slidable(
-                actionPane: SlidableDrawerActionPane(),
-                actionExtentRatio: 0.25,
-                actions: <Widget>[
-                  IconSlideAction(
-                    caption: '編集',
-                    color: Colors.blue,
-                    icon: Icons.edit,
-                    onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) {
-                        return EditVideo(
-                          videoModel: model.videoList[index],
-                        );
-                      }));
-                      model.fetch();
-                    },
-                  )
-                ],
-                secondaryActions: <Widget>[
-                  IconSlideAction(
-                    caption: '削除',
-                    color: Colors.red,
-                    icon: Icons.delete,
-                    onTap: () async {
-                      await model.delete(model.videoList[index].videoId);
-                      model.fetch();
-                    },
-                  )
-                ],
-                child: ListTile(
-                  leading: Icon(Icons.videocam),
-                  title: Text(model.videoList[index].title),
-                  trailing: Icon(Icons.more_vert),
-                  onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) {
-                      return VideoAppPage(
-                        vModel: model.videoList[index],
-                      );
-                    }));
+        return model.loading
+            ? Loading()
+            : Scaffold(
+                appBar: AppBar(
+                  title: Text('動画一覧'),
+                  actions: <Widget>[
+                    IconButton(
+                      icon: Icon(Icons.refresh),
+                      onPressed: () {
+                        model.fetch();
+                      },
+                    )
+                  ],
+                ),
+                body: ListView.builder(
+                  itemCount: model.videoList.length,
+                  itemBuilder: (context, index) => Card(
+                    child: Slidable(
+                      actionPane: SlidableDrawerActionPane(),
+                      actionExtentRatio: 0.25,
+                      actions: <Widget>[
+                        IconSlideAction(
+                          caption: '編集',
+                          color: Colors.blue,
+                          icon: Icons.edit,
+                          onTap: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return EditVideo(
+                                videoModel: model.videoList[index],
+                              );
+                            }));
+                            model.fetch();
+                          },
+                        )
+                      ],
+                      secondaryActions: <Widget>[
+                        IconSlideAction(
+                          caption: '削除',
+                          color: Colors.red,
+                          icon: Icons.delete,
+                          onTap: () async {
+                            await model.delete(model.videoList[index].videoId);
+                            model.fetch();
+                          },
+                        )
+                      ],
+                      child: ListTile(
+                        leading: Icon(Icons.videocam),
+                        title: Text(model.videoList[index].title),
+                        trailing: Icon(Icons.more_vert),
+                        onTap: () {
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) {
+                            return VideoAppPage(
+                              vModel: model.videoList[index],
+                            );
+                          }));
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+                floatingActionButton: FloatingActionButton(
+                  child: Icon(Icons.add),
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        fullscreenDialog: true,
+                        builder: (context) {
+                          return AddVideo();
+                        }));
+                    model.fetch();
                   },
                 ),
-              ),
-            ),
-          ),
-          floatingActionButton: FloatingActionButton(
-            child: Icon(Icons.add),
-            onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  fullscreenDialog: true,
-                  builder: (context) {
-                    return AddVideo();
-                  }));
-              model.fetch();
-            },
-          ),
-        );
+              );
       }),
     );
   }
@@ -119,36 +122,45 @@ class _VideoAppPageState extends State<VideoAppPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.vModel.title),
-        ),
-        body: SingleChildScrollView(
-          child: Center(
-              child: Column(
-            children: <Widget>[
-              _controller.value.initialized
-                  ? AspectRatio(
-                      aspectRatio: _controller.value.aspectRatio,
-                      child: VideoPlayer(_controller),
-                    )
-                  : Container(),
-              Text(widget.vModel.title),
-            ],
-          )),
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            setState(() {
-              _controller.value.isPlaying
-                  ? _controller.pause()
-                  : _controller.play();
-            });
-          },
-          child: Icon(
-            _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
-          ),
-        ));
+    return ChangeNotifierProvider<VideoAppViewModel>(
+      create: (_) => VideoAppViewModel()..fetch(),
+      child: Consumer<VideoAppViewModel>(
+        builder: (context, model, child) => model.loading
+            ? Loading()
+            : Scaffold(
+                appBar: AppBar(
+                  title: Text(widget.vModel.title),
+                ),
+                body: SingleChildScrollView(
+                  child: Center(
+                      child: Column(
+                    children: <Widget>[
+                      _controller.value.initialized
+                          ? AspectRatio(
+                              aspectRatio: _controller.value.aspectRatio,
+                              child: VideoPlayer(_controller),
+                            )
+                          : Container(),
+                      Text(widget.vModel.title),
+                    ],
+                  )),
+                ),
+                floatingActionButton: FloatingActionButton(
+                  onPressed: () {
+                    setState(() {
+                      _controller.value.isPlaying
+                          ? _controller.pause()
+                          : _controller.play();
+                    });
+                  },
+                  child: Icon(
+                    _controller.value.isPlaying
+                        ? Icons.pause
+                        : Icons.play_arrow,
+                  ),
+                )),
+      ),
+    );
   }
 
   @override

@@ -8,6 +8,8 @@ class VideoAppViewModel extends ChangeNotifier {
   String title;
   String url = "";
 
+  bool loading = false;
+
   CollectionReference videoCollection = Firestore.instance.collection('video');
 
   create() async {
@@ -27,6 +29,7 @@ class VideoAppViewModel extends ChangeNotifier {
   }
 
   fetch() async {
+    this.loading = true;
     QuerySnapshot snapshot = await videoCollection.getDocuments();
     List<VideoModel> videoList = snapshot.documents
         .map((doc) => VideoModel(
@@ -37,6 +40,7 @@ class VideoAppViewModel extends ChangeNotifier {
             ))
         .toList();
     this.videoList = videoList;
+    this.loading = false;
     notifyListeners();
   }
 
