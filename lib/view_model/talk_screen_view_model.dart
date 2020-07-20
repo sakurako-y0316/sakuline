@@ -31,47 +31,19 @@ class TalkScreenViewModel extends ChangeNotifier {
   String toUserName;
   String email;
 
+  bool loading = false;
+
   TalkScreenViewModel() {
     fetch();
   }
 
   CollectionReference talkCollection = Firestore.instance.collection('talk');
 
-  // ユーザーIDの取得
-  Future<String> getUser() async {
-    FirebaseUser _user = await FirebaseAuth.instance.currentUser();
-    try {
-      String email = _user.email;
-      print("email:$email");
-      this.email = email;
-      return this.email;
-    } catch (e) {
-      print("取得できません${e.toString()}");
-    }
-    this.email = email;
-    return this.email;
-  }
-
-  // ログアウト
-  logout() async {
-    FirebaseAuth _auth = FirebaseAuth.instance;
-    await _auth.signOut();
-  }
-
-  //Authからemail情報を取得
-  Future<String> getEmail() async {
-    try {
-      FirebaseUser _user = await FirebaseAuth.instance.currentUser();
-      this.email = _user.email;
-      return email;
-    } catch (e) {
-      print("emailの取得失敗：${e.toString()}");
-    }
-    return null;
-  }
-
-  //ドキュメント一覧を取得
+  //--------------------------------
+  // ドキュメント一覧を取得
+  //--------------------------------
   fetch() async {
+    this.loading = true;
     QuerySnapshot snapshot =
         await talkCollection //中身はFirestore.instance.collection('talk');
             .orderBy('createdAt') //並び替え条件
@@ -90,12 +62,52 @@ class TalkScreenViewModel extends ChangeNotifier {
             ))
         .toList();
     this.talkList = talkList;
+    this.loading = false;
     notifyListeners();
   }
 
-  whoSendTalk() {}
+  //--------------------------------
+  // ユーザーIDの取得
+  //--------------------------------
+  Future<String> getUser() async {
+    FirebaseUser _user = await FirebaseAuth.instance.currentUser();
+    try {
+      String email = _user.email;
+      print("email:$email");
+      this.email = email;
+      return this.email;
+    } catch (e) {
+      print("取得できません${e.toString()}");
+    }
+    this.email = email;
+    return this.email;
+  }
 
-  //Talkの追加
+  //--------------------------------
+  // ログアウト
+  //--------------------------------
+  logout() async {
+    FirebaseAuth _auth = FirebaseAuth.instance;
+    await _auth.signOut();
+  }
+
+  //--------------------------------
+  // Authからemail情報を取得
+  //--------------------------------
+  Future<String> getEmail() async {
+    try {
+      FirebaseUser _user = await FirebaseAuth.instance.currentUser();
+      this.email = _user.email;
+      return email;
+    } catch (e) {
+      print("emailの取得失敗：${e.toString()}");
+    }
+    return null;
+  }
+
+  //--------------------------------
+  // Talkの追加
+  //--------------------------------
   addTalk() async {
     String random = randomAlphaNumeric(20);
     Timestamp date = Timestamp.now();
@@ -110,7 +122,7 @@ class TalkScreenViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  String _toUserName() {
+  void _toUserName() {
     if (fromUserName == 'shogo') {
       toUserName = 'sakurako';
     } else {
@@ -118,7 +130,9 @@ class TalkScreenViewModel extends ChangeNotifier {
     }
   }
 
-  //Talkの削除
+  //--------------------------------
+  // Talkの削除
+  //--------------------------------
   deleteTalk(String uid) async {
     await talkCollection.document(uid).delete();
     notifyListeners();

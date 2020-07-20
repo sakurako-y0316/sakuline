@@ -8,14 +8,14 @@ class VideoAppViewModel extends ChangeNotifier {
   String title;
   String url = "";
 
+  bool loading = false;
+
   CollectionReference videoCollection = Firestore.instance.collection('video');
 
   create() async {
     if (title == null || title.isEmpty) {
-      print('title: $title, url: $url');
-      print('失敗');
+      print('登録失敗');
     } else {
-      print('title: $title, url: $url');
       String uuid = randomAlphaNumeric(10);
       await videoCollection.document(uuid).setData({
         "title": title,
@@ -23,12 +23,13 @@ class VideoAppViewModel extends ChangeNotifier {
         'videoId': uuid,
         'createdAt': Timestamp.now(),
       });
-      print('作りました');
+
       notifyListeners();
     }
   }
 
   fetch() async {
+    this.loading = true;
     QuerySnapshot snapshot = await videoCollection.getDocuments();
     List<VideoModel> videoList = snapshot.documents
         .map((doc) => VideoModel(
@@ -39,6 +40,7 @@ class VideoAppViewModel extends ChangeNotifier {
             ))
         .toList();
     this.videoList = videoList;
+    this.loading = false;
     notifyListeners();
   }
 
