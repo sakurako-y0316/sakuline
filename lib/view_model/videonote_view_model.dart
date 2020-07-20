@@ -12,10 +12,8 @@ class VideoAppViewModel extends ChangeNotifier {
 
   create() async {
     if (title == null || title.isEmpty) {
-      print('title: $title, url: $url');
-      print('失敗');
+      print('登録失敗');
     } else {
-      print('title: $title, url: $url');
       String uuid = randomAlphaNumeric(10);
       await videoCollection.document(uuid).setData({
         "title": title,
@@ -23,7 +21,7 @@ class VideoAppViewModel extends ChangeNotifier {
         'videoId': uuid,
         'createdAt': Timestamp.now(),
       });
-      print('作りました');
+
       notifyListeners();
     }
   }

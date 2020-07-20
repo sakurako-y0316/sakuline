@@ -15,7 +15,6 @@ class VideoApp extends StatelessWidget {
     return ChangeNotifierProvider<VideoAppViewModel>(
       create: (_) => VideoAppViewModel()..fetch(),
       child: Consumer<VideoAppViewModel>(builder: (context, model, child) {
-        print('中身です：${model.videoList[0].title}');
         return Scaffold(
           appBar: AppBar(
             title: Text('動画一覧'),
@@ -73,15 +72,6 @@ class VideoApp extends StatelessWidget {
                       );
                     }));
                   },
-                  onLongPress: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) {
-                      return EditVideo(
-                        videoModel: model.videoList[index],
-                      );
-                    }));
-                    model.fetch();
-                  },
                 ),
               ),
             ),
@@ -131,7 +121,7 @@ class _VideoAppPageState extends State<VideoAppPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('動画プレイヤー'),
+          title: Text(widget.vModel.title),
         ),
         body: SingleChildScrollView(
           child: Center(
