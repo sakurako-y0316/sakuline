@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sakura_line/screen/home/mypage_screen.dart';
-
-import 'package:sakura_line/screen/talk_screen.dart';
+import 'package:sakura_line/screen/talk/talk_room.dart';
 import 'package:sakura_line/screen/timeline_screen.dart';
 import 'package:sakura_line/screen/todo/category_list.dart';
 import 'package:sakura_line/screen/todo/todo_list.dart';
@@ -35,7 +34,7 @@ class _TopScreenState extends State<TopScreen> {
         onPageChanged: onchanged,
         children: <Widget>[
           MyPageScreen(),
-          TalkScreen(),
+          TalkRoomScreen(),
           TimeLine(),
           CategoryList(),
         ],
