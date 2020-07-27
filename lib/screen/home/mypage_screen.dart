@@ -14,7 +14,8 @@ class _MyPageScreenState extends State<MyPageScreen> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<MyPageViewModel>(
-      create: (_) => MyPageViewModel()..fetchusers(),
+      create: (_) => MyPageViewModel(),
+      // ..fetchusers(),
       child: Scaffold(
         appBar: AppBar(
           title: Text('マイページ'),
