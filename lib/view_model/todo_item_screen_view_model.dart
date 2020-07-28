@@ -27,7 +27,7 @@ class ToDoItemScreemViewModel extends ChangeNotifier {
   String title;
 
   fetch(String todoId) async {
-    print('fetchします:$todoId');
+    // print('fetchします:$todoId');
     QuerySnapshot snapshot = await Firestore.instance
         .collection('todoItem')
         .where('todoId', isEqualTo: todoId)
@@ -38,20 +38,23 @@ class ToDoItemScreemViewModel extends ChangeNotifier {
           (doc) => ToDoItem(
             title: doc.data['title'],
             todoItemId: doc.data['todoItemId'],
+            todoId: doc.data['todoId'],
           ),
         )
         .toList();
 
     todoItems = listToDoItems;
+
     notifyListeners();
   }
 
-  create() async {
+  create(String todoId) async {
     String uuid = randomAlphaNumeric(20);
-    await Firestore.instance
-        .collection('todoItemId')
-        .document(uuid)
-        .setData({'title': title, 'todoItemId': uuid});
+    await Firestore.instance.collection('todoItem').document(uuid).setData({
+      'title': title,
+      'todoId': todoId,
+      'todoItemId': uuid,
+    });
   }
 
   dalete(String uuid) async {

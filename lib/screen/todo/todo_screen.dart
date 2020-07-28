@@ -25,48 +25,54 @@ class ToDoScreen extends StatelessWidget {
               itemCount: model.todos.length,
               itemBuilder: (BuildContext context, int index) {
                 return Card(
-                  child: ListTile(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) {
-                            return ToDoItemScreen(
-                              model.todos[index].title,
-                              model.todos[index].documentId,
-                            );
-                          },
+                  child: Column(
+                    children: <Widget>[
+                      Image.asset('lib/assets/images/travel.jpg'),
+                      ListTile(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return ToDoItemScreen(
+                                  model.todos[index].title,
+                                  model.todos[index].documentId,
+                                );
+                              },
+                            ),
+                          );
+                        },
+                        title: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text(model.todos[index].title),
+                            IconButton(
+                              icon: Icon(Icons.delete),
+                              onPressed: () async {
+                                await model
+                                    .delete(model.todos[index].documentId);
+                                model.fetch();
+                              },
+                            )
+                          ],
                         ),
-                      );
-                    },
-                    title: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Text(model.todos[index].title),
-                        IconButton(
-                          icon: Icon(Icons.delete),
+                        trailing: IconButton(
+                          icon: Icon(Icons.edit),
                           onPressed: () async {
-                            await model.delete(model.todos[index].documentId);
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) {
+                                  return EditToDo(model.todos[index].title,
+                                      model.todos[index].documentId);
+                                },
+                              ),
+                            );
                             model.fetch();
                           },
-                        )
-                      ],
-                    ),
-                    trailing: IconButton(
-                      icon: Icon(Icons.edit),
-                      onPressed: () async {
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return EditToDo(model.todos[index].title,
-                                  model.todos[index].documentId);
-                            },
-                          ),
-                        );
-                        model.fetch();
-                      },
-                    ),
+                        ),
+                      ),
+                    ],
                   ),
                 );
               },
