@@ -3,8 +3,8 @@ import 'package:sakura_line/screen/home/mypage_screen.dart';
 
 import 'package:sakura_line/screen/talk_screen.dart';
 import 'package:sakura_line/screen/timeline_screen.dart';
-import 'package:sakura_line/screen/todo/category_list.dart';
-import 'package:sakura_line/screen/todo/todo_list.dart';
+import 'package:sakura_line/screen/todo/todo_screen.dart';
+import 'package:sakura_line/screen/todo/todo_screen.dart';
 
 class TopScreen extends StatefulWidget {
   @override
@@ -37,7 +37,7 @@ class _TopScreenState extends State<TopScreen> {
           MyPageScreen(),
           TalkScreen(),
           TimeLine(),
-          CategoryList(),
+          ToDoScreen(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
