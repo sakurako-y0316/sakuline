@@ -21,10 +21,10 @@ class MyPageViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future fetchusers() async {
-    FirebaseUser _user = await FirebaseAuth.instance.currentUser();
-    Future<DocumentSnapshot> snapshot =
-        Firestore.instance.collection('user').document(_user.uid).get();
-    notifyListeners();
-  }
+  // Future fetchusers() async {
+  //   FirebaseUser _user = await FirebaseAuth.instance.currentUser();
+  //   Future<DocumentSnapshot> snapshot =
+  //       Firestore.instance.collection('user').document(_user.uid).get();
+  //   notifyListeners();
+  // }
 }
