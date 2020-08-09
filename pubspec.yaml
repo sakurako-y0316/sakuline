@@ -26,8 +26,9 @@ dependencies:
   random_string: ^2.1.0
   image_picker: ^0.6.7+4
   flutter_spinkit: ^4.1.2+1
-
+  table_calendar: ^2.2.3
   video_player: ^0.10.11+2
+  flutter_rounded_date_picker: ^1.0.4
 
   cached_network_image: ^2.2.0+1
 

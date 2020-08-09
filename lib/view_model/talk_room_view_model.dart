@@ -6,6 +6,25 @@ import 'package:sakura_line/model/talk_room_model.dart';
 import 'package:sakura_line/model/user_model.dart';
 
 class TalkRoomViewModel extends ChangeNotifier {
+  //------------------------
+  // disposeのエラー問題解決
+  //------------------------
+  bool _mounted = true;
+
+  @override
+  void notifyListeners() {
+    if (_mounted) super.notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _mounted = false;
+    super.dispose();
+  }
+  //------------------------
+  // ↑↑ここまで
+  //------------------------
+
   //コンストラクター
   TalkRoomViewModel() {
     fetch();

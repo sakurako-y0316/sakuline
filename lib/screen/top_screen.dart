@@ -5,6 +5,8 @@ import 'package:sakura_line/screen/timeline_screen.dart';
 import 'package:sakura_line/screen/todo/todo_screen.dart';
 import 'package:sakura_line/screen/todo/todo_screen.dart';
 
+import 'history/history.dart';
+
 class TopScreen extends StatefulWidget {
   @override
   _TopScreenState createState() => _TopScreenState();
@@ -35,7 +37,7 @@ class _TopScreenState extends State<TopScreen> {
         children: <Widget>[
           MyPageScreen(),
           TalkRoomScreen(),
-          TimeLine(),
+          History(),
           ToDoScreen(),
         ],
       ),
@@ -50,11 +52,11 @@ class _TopScreenState extends State<TopScreen> {
           BottomNavigationBarItem(icon: Icon(Icons.send), title: Text('トーク')),
           BottomNavigationBarItem(
               icon: Icon(
-                Icons.favorite,
+                Icons.book,
               ),
-              title: Text('タイムライン')),
+              title: Text('ヒストリー')),
           BottomNavigationBarItem(
-              icon: Icon(Icons.event_available), title: Text('TODOリスト')),
+              icon: Icon(Icons.event_available), title: Text('TODOリスト'))
         ],
       ),
     );
