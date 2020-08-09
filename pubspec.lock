@@ -286,6 +286,7 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.8"
+
   flutter_rounded_date_picker:
     dependency: "direct main"
     description:
@@ -293,6 +294,7 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.4"
+
   flutter_slidable:
     dependency: "direct main"
     description:

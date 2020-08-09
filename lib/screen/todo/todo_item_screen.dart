@@ -60,11 +60,12 @@ class AddToDoItem extends StatelessWidget {
         builder: (context, model, child) {
           return Scaffold(
             appBar: AppBar(
-              title: Text('追加'),
+              title: Text('TODOリスト作成'),
             ),
             body: Column(
               children: <Widget>[
                 TextFormField(
+                  decoration: InputDecoration(hintText: '内容を入力くだしてください'),
                   onChanged: (val) {
                     model.title = val;
                   },
@@ -75,7 +76,7 @@ class AddToDoItem extends StatelessWidget {
                       await model.create(todoId);
                       Navigator.pop(context);
                     },
-                    child: Text('追加する'))
+                    child: Text('作成する'))
               ],
             ),
           );

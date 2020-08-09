@@ -17,6 +17,7 @@ dependencies:
   state_notifier: ^0.5.0
   intl: ^0.15.7
   flutter_slidable: ^0.5.4
+  image_picker: ^0.6.7+4
 
   freezed_annotation: ^0.11.0
   provider: ^4.1.3
@@ -31,7 +32,6 @@ dependencies:
   flutter_rounded_date_picker: ^1.0.4
 
   cached_network_image: ^2.2.0+1
-
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
