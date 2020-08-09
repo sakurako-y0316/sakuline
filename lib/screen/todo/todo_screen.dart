@@ -2,10 +2,14 @@
 //FloatingActionButton作成
 //create画面作成
 
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sakura_line/screen/todo/todo_item_screen.dart';
 import 'package:sakura_line/view_model/todo_screen_view_model.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ToDoScreen extends StatelessWidget {
   @override
@@ -24,73 +28,89 @@ class ToDoScreen extends StatelessWidget {
             body: ListView.builder(
               itemCount: model.todos.length,
               itemBuilder: (BuildContext context, int index) {
-                return Card(
-                  child: Column(
-                    children: <Widget>[
-                      Image.asset('lib/assets/images/travel.jpg'),
-                      ListTile(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) {
-                                return ToDoItemScreen(
-                                  model.todos[index].title,
-                                  model.todos[index].documentId,
-                                );
-                              },
+                return Column(
+                  children: <Widget>[
+                    ListTile(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return ToDoItemScreen(
+                                model.todos[index].title,
+                                model.todos[index].documentId,
+                              );
+                            },
+                          ),
+                        );
+                      },
+                      title: Column(
+                        children: <Widget>[
+                          Container(
+                              height: 200,
+                              child: model.todos[index].images == null
+                                  ? Container(
+                                      height: 200,
+                                      child: Image.asset(
+                                          'lib/assets/images/noimage.png'),
+                                    )
+                                  : Image.network(
+                                      model.todos[index].images,
+                                    )),
+                          Container(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Text(model.todos[index].title),
+                                IconButton(
+                                  icon: Icon(Icons.delete),
+                                  onPressed: () async {
+                                    await model
+                                        .delete(model.todos[index].documentId);
+                                    model.fetch();
+                                  },
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.edit),
+                                  onPressed: () async {
+                                    await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) {
+                                          return EditToDo(
+                                              model.todos[index].title,
+                                              model.todos[index].documentId);
+                                        },
+                                      ),
+                                    );
+                                    model.fetch();
+                                  },
+                                ),
+                              ],
                             ),
-                          );
-                        },
-                        title: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text(model.todos[index].title),
-                            IconButton(
-                              icon: Icon(Icons.delete),
-                              onPressed: () async {
-                                await model
-                                    .delete(model.todos[index].documentId);
-                                model.fetch();
-                              },
-                            )
-                          ],
-                        ),
-                        trailing: IconButton(
-                          icon: Icon(Icons.edit),
-                          onPressed: () async {
-                            await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) {
-                                  return EditToDo(model.todos[index].title,
-                                      model.todos[index].documentId);
-                                },
-                              ),
-                            );
-                            model.fetch();
-                          },
-                        ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 );
               },
             ),
             floatingActionButton: FloatingActionButton(
-                onPressed: () async {
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      fullscreenDialog: true,
-                      builder: (context) {
-                        return AddToDo();
-                      },
-                    ),
-                  );
-                  model.fetch();
-                },
-                child: Icon(Icons.add)),
+              onPressed: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    fullscreenDialog: true,
+                    builder: (context) {
+                      return AddToDo();
+                    },
+                  ),
+                );
+                model.fetch();
+              },
+              child: Icon(Icons.add),
+            ),
           );
         },
       ),
@@ -98,36 +118,118 @@ class ToDoScreen extends StatelessWidget {
   }
 }
 
-class AddToDo extends StatelessWidget {
+class AddToDo extends StatefulWidget {
+  @override
+  _AddToDoState createState() => _AddToDoState();
+}
+
+class _AddToDoState extends State<AddToDo> {
+  final picker = ImagePicker();
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<ToDoScreenViewModel>(
-      create: (_) => ToDoScreenViewModel(),
+      create: (_) => ToDoScreenViewModel()..fetch(),
       child: Consumer<ToDoScreenViewModel>(
         builder: (context, model, child) {
-          return Scaffold(
-            appBar: AppBar(
-              title: Text('追加'),
-            ),
-            body: Column(
-              children: <Widget>[
-                TextFormField(
-                  onChanged: (val) {
-                    model.title = val;
-                  },
+          return Stack(
+            children: <Widget>[
+              Scaffold(
+                appBar: AppBar(
+                  title: Text('イベント新規作成'),
                 ),
-                FlatButton(
-                  onPressed: () async {
-                    await model.create();
-                    Navigator.pop(context);
-                  },
-                  child: Text('追加'),
-                )
-              ],
-            ),
+                body: Column(
+                  children: <Widget>[
+                    TextFormField(
+                      decoration: InputDecoration(hintText: 'イベントを入力してください'),
+                      onChanged: (val) {
+                        model.title = val;
+                      },
+                    ),
+                    FlatButton(
+                      color: Colors.red[200],
+                      onPressed: () async {
+                        model.startLoading();
+                        await model.create();
+                        Navigator.pop(context);
+                        model.endLoading();
+                      },
+                      child: Text('作成'),
+                    ),
+                    SizedBox(
+                      height: 24,
+                    ),
+                    model.imageFile != null
+                        ? Image.file(model.imageFile)
+                        : Container(
+                            color: Colors.grey,
+                            width: double.infinity,
+                            height: 250,
+                          ),
+                    FlatButton(
+                        color: Colors.red[200],
+                        onPressed: () {
+                          _projectIconBottomSheet(context, model);
+                        },
+                        child: Text('画像を設定する'))
+                  ],
+                ),
+              ),
+              Consumer<ToDoScreenViewModel>(builder: (context, model, child) {
+                return model.isLoading
+                    ? Container(
+                        color: Colors.black.withOpacity(0.3),
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      )
+                    : SizedBox();
+              })
+            ],
           );
         },
       ),
+    );
+  }
+
+  Future<void> _projectIconBottomSheet(
+      BuildContext context, ToDoScreenViewModel model) async {
+    await showCupertinoModalPopup<void>(
+      context: context,
+      builder: (context) {
+        return CupertinoActionSheet(
+          actions: <Widget>[
+            CupertinoActionSheetAction(
+              child: Text(
+                'ライブラリから選択',
+                style: TextStyle(color: Colors.blue),
+              ),
+              onPressed: () async {
+                final pickedFile =
+                    await picker.getImage(source: ImageSource.gallery);
+                model.setImage(File(pickedFile.path));
+              },
+            ),
+            CupertinoActionSheetAction(
+              child: Text(
+                'カメラ撮影',
+                style: TextStyle(color: Colors.blue),
+              ),
+              onPressed: () {
+                // getImage();
+              },
+            ),
+          ],
+          cancelButton: CupertinoActionSheetAction(
+            child: Text(
+              'キャンセル',
+              style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        );
+      },
     );
   }
 }
