@@ -7,6 +7,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sakura_line/model/todo.dart';
 import 'package:sakura_line/screen/todo/todo_item_screen.dart';
 import 'package:sakura_line/view_model/todo_screen_view_model.dart';
 import 'package:image_picker/image_picker.dart';
@@ -46,17 +47,18 @@ class ToDoScreen extends StatelessWidget {
                       },
                       title: Column(
                         children: <Widget>[
-                          Container(
-                              height: 200,
-                              child: model.todos[index].images == null
-                                  ? Container(
-                                      height: 200,
-                                      child: Image.asset(
-                                          'lib/assets/images/noimage.png'),
-                                    )
-                                  : Image.network(
-                                      model.todos[index].images,
-                                    )),
+                          model.todos[index].images == null
+                              ? Container(
+                                  height: 200,
+                                  child: Image.asset(
+                                      'lib/assets/images/noimage.png'),
+                                )
+                              : Container(
+                                  height: 200,
+                                  child: Image.network(
+                                    model.todos[index].images,
+                                  ),
+                                ),
                           Container(
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -77,9 +79,7 @@ class ToDoScreen extends StatelessWidget {
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) {
-                                          return EditToDo(
-                                              model.todos[index].title,
-                                              model.todos[index].documentId);
+                                          return EditToDo(model.todos[index]);
                                         },
                                       ),
                                     );
@@ -168,7 +168,7 @@ class _AddToDoState extends State<AddToDo> {
                     FlatButton(
                         color: Colors.red[200],
                         onPressed: () {
-                          _projectIconBottomSheet(context, model);
+                          selectImageBottomSheet(context, model);
                         },
                         child: Text('画像を設定する'))
                   ],
@@ -191,7 +191,7 @@ class _AddToDoState extends State<AddToDo> {
     );
   }
 
-  Future<void> _projectIconBottomSheet(
+  Future<void> selectImageBottomSheet(
       BuildContext context, ToDoScreenViewModel model) async {
     await showCupertinoModalPopup<void>(
       context: context,
@@ -235,40 +235,114 @@ class _AddToDoState extends State<AddToDo> {
 }
 
 class EditToDo extends StatelessWidget {
-  final String title;
-  final String documentId;
+  final ToDo todo;
 
-  const EditToDo(this.title, this.documentId);
+  EditToDo(this.todo);
+  final picker = ImagePicker();
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<ToDoScreenViewModel>(
       create: (_) => ToDoScreenViewModel(),
       child: Consumer<ToDoScreenViewModel>(
         builder: (context, model, child) {
-          return Scaffold(
-            appBar: AppBar(
-              title: Text('更新'),
-            ),
-            body: Column(
-              children: <Widget>[
-                TextFormField(
-                  initialValue: title,
-                  onChanged: (val) {
-                    model.title = val;
-                  },
+          return Stack(
+            children: <Widget>[
+              Scaffold(
+                appBar: AppBar(
+                  title: Text('更新'),
                 ),
-                FlatButton(
-                  onPressed: () async {
-                    await model.update(documentId);
-                    Navigator.pop(context);
-                  },
-                  child: Text('更新'),
-                )
-              ],
-            ),
+                body: Column(
+                  children: <Widget>[
+                    TextFormField(
+                      initialValue: todo.title,
+                      onChanged: (val) {
+                        model.title = val;
+                      },
+                    ),
+                    FlatButton(
+                      color: Colors.red[200],
+                      onPressed: () async {
+                        await model.update(todo.documentId, todo);
+                        Navigator.pop(context);
+                      },
+                      child: Text('更新'),
+                    ),
+                    SizedBox(
+                      height: 24,
+                    ),
+                    model.imageFile != null
+                        ? Image.file(model.imageFile)
+                        : Container(
+                            child: Image.network(todo.images),
+                            height: 250,
+                            width: double.infinity,
+                          ),
+                    FlatButton(
+                      color: Colors.red[200],
+                      onPressed: () {
+                        updateImageBottomSheet(context, model);
+                      },
+                      child: Text('画像を変更する'),
+                    )
+                  ],
+                ),
+              ),
+              Consumer<ToDoScreenViewModel>(builder: (context, model, child) {
+                return model.isLoading
+                    ? Container(
+                        color: Colors.black.withOpacity(0.3),
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      )
+                    : SizedBox();
+              }),
+            ],
           );
         },
       ),
+    );
+  }
+
+  Future<void> updateImageBottomSheet(
+      BuildContext context, ToDoScreenViewModel model) async {
+    await showCupertinoModalPopup<void>(
+      context: context,
+      builder: (context) {
+        return CupertinoActionSheet(
+          actions: <Widget>[
+            CupertinoActionSheetAction(
+              child: Text(
+                'ライブラリから選択',
+                style: TextStyle(color: Colors.blue),
+              ),
+              onPressed: () async {
+                final pickedFile =
+                    await picker.getImage(source: ImageSource.gallery);
+                model.setImage(File(pickedFile.path));
+              },
+            ),
+            CupertinoActionSheetAction(
+              child: Text(
+                'カメラ撮影',
+                style: TextStyle(color: Colors.blue),
+              ),
+              onPressed: () {
+                // getImage();
+              },
+            ),
+          ],
+          cancelButton: CupertinoActionSheetAction(
+            child: Text(
+              'キャンセル',
+              style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        );
+      },
     );
   }
 }

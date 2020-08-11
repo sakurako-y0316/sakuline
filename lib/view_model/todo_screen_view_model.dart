@@ -80,14 +80,14 @@ class ToDoScreenViewModel extends ChangeNotifier {
 
     // ①乱数を生成
     String uuid = randomAlphaNumeric(20);
-    final images = await uploadImageFile();
+    final imageUrl = await uploadImageFile();
     try {
       // ②Firestoreに登録処理
       Firestore.instance.collection('todo').document(uuid).setData(
         {
           'title': title,
           'documentId': uuid,
-          'images': images,
+          'images': imageUrl,
           'createdAt': Timestamp.now(),
         },
       );
@@ -107,40 +107,49 @@ class ToDoScreenViewModel extends ChangeNotifier {
 //---------------------------------
 // データ更新
 //---------------------------------
-  update(String uuid) async {
-    final images = await uploadImageFile();
-    await Firestore.instance
-        .collection('todo')
-        .document(uuid)
-        .updateData({'title': title, 'images': images});
+  update(String uuid, ToDo todo) async {
+    print('updateファイル:$imageFile');
+    final imageUrl = await uploadImageFile();
+    print("images: $imageUrl");
+
+    await Firestore.instance.collection('todo').document(uuid).updateData({
+      'title': title == null ? todo.title : title,
+      'images': imageUrl.isEmpty ? todo.images : imageUrl,
+    });
   }
 
-  Future getEventImage() async {
-    final ImagePicker picker = ImagePicker();
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
-    imageFile = File(pickedFile.path);
-    notifyListeners();
-  }
+  // Future getEventImage() async {
+  //   final ImagePicker picker = ImagePicker();
+  //   final pickedFile = await picker.getImage(source: ImageSource.gallery);
+  //   imageFile = File(pickedFile.path);
+  //   notifyListeners();
+  // }
 
   setImage(File imageFile) {
     this.imageFile = imageFile;
     notifyListeners();
   }
 
+//---------------------------------
+// 画像アップロード
+//---------------------------------
   Future<String> uploadImageFile() async {
     if (imageFile == null) {
       return '';
     }
     print('タイトル:$title');
     print('ファイル:$imageFile');
-    final storage = FirebaseStorage.instance;
-    final ref = storage.ref().child('todo').child(title);
-    final snapshot = await ref
+    final FirebaseStorage storage = FirebaseStorage.instance;
+    //Reference 参照 ①保存する場所を指定してる
+    final StorageReference ref = storage.ref().child('todo').child(title);
+    final StorageTaskSnapshot snapshot = await ref
         .putFile(
-          imageFile,
+          //②ファイルを置いてアップロードしている
+          imageFile, //端末中のURL(元画像がある場所)
         )
-        .onComplete;
-    final downloadURL = await snapshot.ref.getDownloadURL();
+        .onComplete; //③アップロードされた場所をダウンロード
+    final String downloadURL = await snapshot.ref.getDownloadURL();
+    print('ダウンロードURL:$downloadURL');
     return downloadURL;
   }
 }
