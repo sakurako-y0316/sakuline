@@ -80,7 +80,7 @@ class ToDoScreenViewModel extends ChangeNotifier {
 
     // ①乱数を生成
     String uuid = randomAlphaNumeric(20);
-    final imageUrl = await uploadImageFile();
+    final imageUrl = await uploadImageFile(uuid);
     try {
       // ②Firestoreに登録処理
       Firestore.instance.collection('todo').document(uuid).setData(
@@ -100,20 +100,29 @@ class ToDoScreenViewModel extends ChangeNotifier {
 //---------------------------------
 // データ削除
 //---------------------------------
-  delete(String uuid) async {
-    await Firestore.instance.collection('todo').document(uuid).delete();
+  delete(String documentId) async {
+    await Firestore.instance.collection('todo').document(documentId).delete();
   }
 
 //---------------------------------
 // データ更新
 //---------------------------------
-  update(String uuid, ToDo todo) async {
+  update(String documentId, ToDo todo) async {
     print('updateファイル:$imageFile');
-    final imageUrl = await uploadImageFile();
+
+    //タイトルがnullの時の操作（画像更新のみ）
+    if (title == null) {
+      title = todo.title;
+    }
+
+    final imageUrl = await uploadImageFile(documentId);
     print("images: $imageUrl");
 
-    await Firestore.instance.collection('todo').document(uuid).updateData({
-      'title': title == null ? todo.title : title,
+    await Firestore.instance
+        .collection('todo')
+        .document(documentId)
+        .updateData({
+      'title': title,
       'images': imageUrl.isEmpty ? todo.images : imageUrl,
     });
   }
@@ -133,15 +142,19 @@ class ToDoScreenViewModel extends ChangeNotifier {
 //---------------------------------
 // 画像アップロード
 //---------------------------------
-  Future<String> uploadImageFile() async {
+  Future<String> uploadImageFile(
+    String uuid,
+  ) async {
     if (imageFile == null) {
       return '';
     }
+
     print('タイトル:$title');
     print('ファイル:$imageFile');
     final FirebaseStorage storage = FirebaseStorage.instance;
     //Reference 参照 ①保存する場所を指定してる
-    final StorageReference ref = storage.ref().child('todo').child(title);
+    final StorageReference ref =
+        storage.ref().child('todo').child(uuid).child(title);
     final StorageTaskSnapshot snapshot = await ref
         .putFile(
           //②ファイルを置いてアップロードしている
@@ -153,3 +166,4 @@ class ToDoScreenViewModel extends ChangeNotifier {
     return downloadURL;
   }
 }
+//titleではなくIDで保存する

@@ -3,7 +3,6 @@
 //create画面作成
 
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -67,9 +66,39 @@ class ToDoScreen extends StatelessWidget {
                                 IconButton(
                                   icon: Icon(Icons.delete),
                                   onPressed: () async {
-                                    await model
-                                        .delete(model.todos[index].documentId);
-                                    model.fetch();
+                                    // _deleteDialog(context, model.todos[index]);
+                                    await showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          actions: <Widget>[
+                                            Row(
+                                              children: <Widget>[
+                                                FlatButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: Text('キャンセル'),
+                                                ),
+                                                FlatButton(
+                                                    onPressed: () async {
+                                                      Navigator.pop(context);
+                                                      await deleteToDo(
+                                                        context,
+                                                        model,
+                                                        model.todos[index]
+                                                            .documentId,
+                                                      );
+                                                    },
+                                                    child: Text('OK')),
+                                              ],
+                                            )
+                                          ],
+                                          title: Text(
+                                              '${model.todos[index].title}\nを削除しますか？'),
+                                        );
+                                      },
+                                    );
                                   },
                                 ),
                                 IconButton(
@@ -115,6 +144,37 @@ class ToDoScreen extends StatelessWidget {
         },
       ),
     );
+  }
+
+  Future deleteToDo(BuildContext context, ToDoScreenViewModel model,
+      String documentId) async {
+    try {
+      await model.delete(documentId);
+      await model.fetch();
+    } catch (e) {
+      await _showDialog(context, e.toString());
+      print(e.toString());
+    }
+  }
+
+  Future<dynamic> _showDialog(
+    BuildContext context,
+    String title,
+  ) async {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            actions: <Widget>[
+              FlatButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
   }
 }
 
