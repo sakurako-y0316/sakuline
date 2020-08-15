@@ -24,6 +24,7 @@ class ToDoItemScreemViewModel extends ChangeNotifier {
 
   List<ToDoItem> todoItem = [];
   String title;
+  bool done;
 
   fetch(String todoId) async {
     // print('fetchします:$todoId');
@@ -38,6 +39,7 @@ class ToDoItemScreemViewModel extends ChangeNotifier {
             title: doc.data['title'],
             todoItemId: doc.data['todoItemId'],
             todoId: doc.data['todoId'],
+            done: doc.data['done'],
           ),
         )
         .toList();
@@ -55,6 +57,7 @@ class ToDoItemScreemViewModel extends ChangeNotifier {
       'title': title,
       'todoId': todoId,
       'todoItemId': uuid,
+      'done': false,
     });
   }
 
@@ -65,13 +68,27 @@ class ToDoItemScreemViewModel extends ChangeNotifier {
         .delete();
   }
 
-  update(String todoItemId, ToDoItem toDoItem) async {
+  update({
+    String todoItemId,
+    ToDoItem toDoItem,
+  }) async {
     if (title == null) {
       title = toDoItem.title;
     }
     await Firestore.instance
         .collection('todoItem')
         .document(todoItemId)
-        .updateData({'title': title});
+        .updateData({
+      'title': title,
+    });
+  }
+
+  doneItem(String todoItemId, bool done) async {
+    done == false ? done = true : done = false;
+    await Firestore.instance
+        .collection('todoItem')
+        .document(todoItemId)
+        .updateData({'done': done});
+    notifyListeners();
   }
 }

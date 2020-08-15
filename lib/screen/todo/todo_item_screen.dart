@@ -7,7 +7,11 @@ import 'package:sakura_line/view_model/todo_item_screen_view_model.dart';
 class ToDoItemScreen extends StatelessWidget {
   final String title;
   final String todoId;
-  const ToDoItemScreen(this.title, this.todoId);
+
+  const ToDoItemScreen(
+    this.title,
+    this.todoId,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +65,22 @@ class ToDoItemScreen extends StatelessWidget {
                   secondaryActions: <Widget>[
                     IconSlideAction(
                       onTap: () async {
+                        await model.doneItem(
+                          model.todoItem[index].todoItemId,
+                          model.todoItem[index].done,
+                        );
+                        model.fetch(todoId);
+                      },
+                      caption: model.todoItem[index].done == true ? '戻す' : '完了',
+                      color: model.todoItem[index].done == true
+                          ? Colors.white30
+                          : Colors.green,
+                      icon: model.todoItem[index].done == true
+                          ? Icons.cached
+                          : Icons.done_outline,
+                    ),
+                    IconSlideAction(
+                      onTap: () async {
                         await model.dalete(
                           model.todoItem[index].todoItemId,
                         );
@@ -72,7 +92,20 @@ class ToDoItemScreen extends StatelessWidget {
                     )
                   ],
                   child: ListTile(
-                    title: Text(model.todoItem[index].title),
+                    leading: model.todoItem[index].done == true
+                        ? Icon(
+                            Icons.check_circle,
+                            color: Colors.red,
+                          )
+                        : Text(''),
+                    title: model.todoItem[index].done == true
+                        ? Text(
+                            model.todoItem[index].title,
+                            style: TextStyle(
+                              decoration: TextDecoration.lineThrough,
+                            ),
+                          )
+                        : Text(model.todoItem[index].title),
                   ),
                 ),
               ),
@@ -148,7 +181,8 @@ class EditToDoItem extends StatelessWidget {
                 FlatButton(
                   color: Colors.red[200],
                   onPressed: () async {
-                    await model.update(toDoItems.todoItemId, toDoItems);
+                    await model.update(
+                        todoItemId: toDoItems.todoItemId, toDoItem: toDoItems);
                     Navigator.pop(context);
                   },
                   child: Text('更新する'),
