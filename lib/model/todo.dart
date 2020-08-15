@@ -3,5 +3,9 @@ class ToDo {
   final String title;
   final String images;
 
-  ToDo({this.documentId, this.title, this.images});
+  ToDo({
+    this.documentId,
+    this.title,
+    this.images,
+  });
 }

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:random_string/random_string.dart';
 import 'package:sakura_line/model/todo.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:sakura_line/model/todo_item.dart';
 
 class ToDoScreenViewModel extends ChangeNotifier {
   //------------------------
@@ -101,7 +102,33 @@ class ToDoScreenViewModel extends ChangeNotifier {
 // データ削除
 //---------------------------------
   delete(String documentId) async {
+    // ①todoを削除
     await Firestore.instance.collection('todo').document(documentId).delete();
+    // ②todoItemからフィルターをかけて削除
+    await deleteToDoItem(documentId);
+    notifyListeners();
+  }
+
+  //ToDoに紐づくToDoItemを全て削除
+  deleteToDoItem(String todoId) async {
+    //フィルターをかけて指定のtodoIdを持つドキュメント一覧を取得
+    QuerySnapshot snapshot = await Firestore.instance
+        .collection('todoItem')
+        .where('todoId', isEqualTo: todoId)
+        .getDocuments();
+
+    //取得したドキュメント一覧をモデルに格納
+    List<ToDoItem> todoItemList = snapshot.documents
+        .map((doc) => ToDoItem(todoItemId: doc.data['todoItemId']))
+        .toList();
+
+    //順番に削除（繰り返し処理）
+    for (int i = 0; i < todoItemList.length; i++) {
+      await Firestore.instance
+          .collection('todoItem')
+          .document(todoItemList[i].todoItemId)
+          .delete();
+    }
   }
 
 //---------------------------------

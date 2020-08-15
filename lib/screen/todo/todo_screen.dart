@@ -83,7 +83,7 @@ class ToDoScreen extends StatelessWidget {
                                                 FlatButton(
                                                     onPressed: () async {
                                                       Navigator.pop(context);
-                                                      await deleteToDo(
+                                                      await _deleteToDo(
                                                         context,
                                                         model,
                                                         model.todos[index]
@@ -146,7 +146,7 @@ class ToDoScreen extends StatelessWidget {
     );
   }
 
-  Future deleteToDo(BuildContext context, ToDoScreenViewModel model,
+  Future _deleteToDo(BuildContext context, ToDoScreenViewModel model,
       String documentId) async {
     try {
       await model.delete(documentId);
@@ -197,41 +197,47 @@ class _AddToDoState extends State<AddToDo> {
                 appBar: AppBar(
                   title: Text('イベント新規作成'),
                 ),
-                body: Column(
-                  children: <Widget>[
-                    TextFormField(
-                      decoration: InputDecoration(hintText: 'イベントを入力してください'),
-                      onChanged: (val) {
-                        model.title = val;
-                      },
-                    ),
-                    FlatButton(
-                      color: Colors.red[200],
-                      onPressed: () async {
-                        model.startLoading();
-                        await model.create();
-                        Navigator.pop(context);
-                        model.endLoading();
-                      },
-                      child: Text('作成'),
-                    ),
-                    SizedBox(
-                      height: 24,
-                    ),
-                    model.imageFile != null
-                        ? Image.file(model.imageFile)
-                        : Container(
-                            color: Colors.grey,
-                            width: double.infinity,
-                            height: 250,
-                          ),
-                    FlatButton(
+                body: SingleChildScrollView(
+                  child: Column(
+                    children: <Widget>[
+                      TextFormField(
+                        decoration: InputDecoration(hintText: 'イベントを入力してください'),
+                        onChanged: (val) {
+                          model.title = val;
+                        },
+                      ),
+                      SizedBox(
+                        height: 24,
+                      ),
+                      model.imageFile != null
+                          ? Image.file(model.imageFile)
+                          : Container(
+                              color: Colors.grey,
+                              width: double.infinity,
+                              height: 250,
+                            ),
+                      FlatButton(
                         color: Colors.red[200],
                         onPressed: () {
                           selectImageBottomSheet(context, model);
                         },
-                        child: Text('画像を設定する'))
-                  ],
+                        child: Text('画像を設定する'),
+                      ),
+                      SizedBox(
+                        height: 100,
+                      ),
+                      FlatButton(
+                        color: Colors.red[200],
+                        onPressed: () async {
+                          model.startLoading();
+                          await model.create();
+                          Navigator.pop(context);
+                          model.endLoading();
+                        },
+                        child: Text('作成'),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               Consumer<ToDoScreenViewModel>(builder: (context, model, child) {
@@ -267,6 +273,7 @@ class _AddToDoState extends State<AddToDo> {
                 final pickedFile =
                     await picker.getImage(source: ImageSource.gallery);
                 model.setImage(File(pickedFile.path));
+                Navigator.pop(context);
               },
             ),
             CupertinoActionSheetAction(
