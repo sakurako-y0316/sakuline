@@ -8,7 +8,6 @@ class ToDoItemScreemViewModel extends ChangeNotifier {
   // disposeのエラー問題解決
   //------------------------
   bool _mounted = true;
-
   @override
   void notifyListeners() {
     if (_mounted) super.notifyListeners();
@@ -23,7 +22,7 @@ class ToDoItemScreemViewModel extends ChangeNotifier {
   // ↑↑ここまで
   //------------------------
 
-  List<ToDoItem> todoItems = [];
+  List<ToDoItem> todoItem = [];
   String title;
 
   fetch(String todoId) async {
@@ -43,12 +42,14 @@ class ToDoItemScreemViewModel extends ChangeNotifier {
         )
         .toList();
 
-    todoItems = listToDoItems;
+    todoItem = listToDoItems;
 
     notifyListeners();
   }
 
-  create(String todoId) async {
+  create(
+    String todoId,
+  ) async {
     String uuid = randomAlphaNumeric(20);
     await Firestore.instance.collection('todoItem').document(uuid).setData({
       'title': title,
@@ -57,14 +58,20 @@ class ToDoItemScreemViewModel extends ChangeNotifier {
     });
   }
 
-  dalete(String uuid) async {
-    await Firestore.instance.collection('todoItem').document(uuid).delete();
-  }
-
-  update(String uuid) async {
+  dalete(String todoItemId) async {
     await Firestore.instance
         .collection('todoItem')
-        .document(uuid)
+        .document(todoItemId)
+        .delete();
+  }
+
+  update(String todoItemId, ToDoItem toDoItem) async {
+    if (title == null) {
+      title = toDoItem.title;
+    }
+    await Firestore.instance
+        .collection('todoItem')
+        .document(todoItemId)
         .updateData({'title': title});
   }
 }
