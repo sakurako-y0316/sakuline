@@ -48,18 +48,30 @@ class ToDoItemScreen extends StatelessWidget {
                   actions: <Widget>[
                     IconSlideAction(
                       onTap: () async {
+                        //買うもの、持ち物、その他add_shopping_cart、
+//luggage,more
                         //async,await
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute<void>(builder: (context) {
-                            return EditToDoItem(model.todoItem[index]);
-                          }),
-                        ); //ここでフェッチ　したら、戻ると同時に更新する
-                        model.fetch(todoId);
+                        // await Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute<void>(builder: (context) {
+                        //     return EditToDoItem(model.todoItem[index]);
+                        //   }),
+                        // ); //ここでフェッチ　したら、戻ると同時に更新する
+                        // model.fetch(todoId);
                       },
-                      caption: '編集',
+                      caption: '',
                       color: Colors.blue,
-                      icon: Icons.edit,
+                      icon: Icons.add_shopping_cart,
+                    ),
+                    IconSlideAction(
+                      color: Colors.orange,
+                      caption: '',
+                      icon: Icons.language,
+                    ),
+                    IconSlideAction(
+                      color: Colors.orange,
+                      caption: '',
+                      icon: Icons.more,
                     )
                   ],
                   secondaryActions: <Widget>[
@@ -78,6 +90,21 @@ class ToDoItemScreen extends StatelessWidget {
                       icon: model.todoItem[index].done == true
                           ? Icons.cached
                           : Icons.done_outline,
+                    ),
+                    IconSlideAction(
+                      onTap: () async {
+                        //async,await
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute<void>(builder: (context) {
+                            return EditToDoItem(model.todoItem[index]);
+                          }),
+                        ); //ここでフェッチ　したら、戻ると同時に更新する
+                        model.fetch(todoId);
+                      },
+                      caption: '編集',
+                      color: Colors.blue,
+                      icon: Icons.edit,
                     ),
                     IconSlideAction(
                       onTap: () async {
@@ -134,6 +161,9 @@ class AddToDoItem extends StatelessWidget {
             ),
             body: Column(
               children: <Widget>[
+                SizedBox(
+                  height: 20,
+                ),
                 TextFormField(
                   decoration: InputDecoration(hintText: '内容を入力くだしてください'),
                   onChanged: (val) {
@@ -141,12 +171,21 @@ class AddToDoItem extends StatelessWidget {
                   },
                 ),
                 FlatButton(
-                    color: Colors.yellow,
-                    onPressed: () async {
-                      await model.create(todoId);
-                      Navigator.pop(context);
-                    },
-                    child: Text('作成する'))
+                  color: Colors.yellow,
+                  onPressed: () async {
+                    await model.create(todoId);
+                    Navigator.pop(context);
+                  },
+                  child: Text('作成する'),
+                ),
+                SizedBox(
+                  height: 50,
+                ),
+                FlatButton(
+                  color: Colors.red[200],
+                  onPressed: () {},
+                  child: Text('カテゴリーを選択する'),
+                ),
               ],
             ),
           );

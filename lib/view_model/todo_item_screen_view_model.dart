@@ -23,6 +23,7 @@ class ToDoItemScreemViewModel extends ChangeNotifier {
   //------------------------
 
   List<ToDoItem> todoItem = [];
+  //フィールド
   String title;
   bool done;
 
