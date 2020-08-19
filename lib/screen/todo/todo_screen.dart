@@ -3,10 +3,10 @@
 //create画面作成
 
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sakura_line/model/todo.dart';
 import 'package:sakura_line/screen/todo/todo_item_screen.dart';
 import 'package:sakura_line/view_model/todo_screen_view_model.dart';
 import 'package:image_picker/image_picker.dart';
@@ -46,17 +46,18 @@ class ToDoScreen extends StatelessWidget {
                       },
                       title: Column(
                         children: <Widget>[
-                          Container(
-                              height: 200,
-                              child: model.todos[index].images == null
-                                  ? Container(
-                                      height: 200,
-                                      child: Image.asset(
-                                          'lib/assets/images/noimage.png'),
-                                    )
-                                  : Image.network(
-                                      model.todos[index].images,
-                                    )),
+                          model.todos[index].images == null
+                              ? Container(
+                                  height: 200,
+                                  child: Image.asset(
+                                      'lib/assets/images/noimage.png'),
+                                )
+                              : Container(
+                                  height: 200,
+                                  child: Image.network(
+                                    model.todos[index].images,
+                                  ),
+                                ),
                           Container(
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -65,9 +66,39 @@ class ToDoScreen extends StatelessWidget {
                                 IconButton(
                                   icon: Icon(Icons.delete),
                                   onPressed: () async {
-                                    await model
-                                        .delete(model.todos[index].documentId);
-                                    model.fetch();
+                                    // _deleteDialog(context, model.todos[index]);
+                                    await showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          actions: <Widget>[
+                                            Row(
+                                              children: <Widget>[
+                                                FlatButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: Text('キャンセル'),
+                                                ),
+                                                FlatButton(
+                                                    onPressed: () async {
+                                                      Navigator.pop(context);
+                                                      await _deleteToDo(
+                                                        context,
+                                                        model,
+                                                        model.todos[index]
+                                                            .documentId,
+                                                      );
+                                                    },
+                                                    child: Text('OK')),
+                                              ],
+                                            )
+                                          ],
+                                          title: Text(
+                                              '${model.todos[index].title}\nを削除しますか？'),
+                                        );
+                                      },
+                                    );
                                   },
                                 ),
                                 IconButton(
@@ -77,9 +108,7 @@ class ToDoScreen extends StatelessWidget {
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) {
-                                          return EditToDo(
-                                              model.todos[index].title,
-                                              model.todos[index].documentId);
+                                          return EditToDo(model.todos[index]);
                                         },
                                       ),
                                     );
@@ -116,6 +145,37 @@ class ToDoScreen extends StatelessWidget {
       ),
     );
   }
+
+  Future _deleteToDo(BuildContext context, ToDoScreenViewModel model,
+      String documentId) async {
+    try {
+      await model.delete(documentId);
+      await model.fetch();
+    } catch (e) {
+      await _showDialog(context, e.toString());
+      print(e.toString());
+    }
+  }
+
+  Future<dynamic> _showDialog(
+    BuildContext context,
+    String title,
+  ) async {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            actions: <Widget>[
+              FlatButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+  }
 }
 
 class AddToDo extends StatefulWidget {
@@ -137,41 +197,47 @@ class _AddToDoState extends State<AddToDo> {
                 appBar: AppBar(
                   title: Text('イベント新規作成'),
                 ),
-                body: Column(
-                  children: <Widget>[
-                    TextFormField(
-                      decoration: InputDecoration(hintText: 'イベントを入力してください'),
-                      onChanged: (val) {
-                        model.title = val;
-                      },
-                    ),
-                    FlatButton(
-                      color: Colors.red[200],
-                      onPressed: () async {
-                        model.startLoading();
-                        await model.create();
-                        Navigator.pop(context);
-                        model.endLoading();
-                      },
-                      child: Text('作成'),
-                    ),
-                    SizedBox(
-                      height: 24,
-                    ),
-                    model.imageFile != null
-                        ? Image.file(model.imageFile)
-                        : Container(
-                            color: Colors.grey,
-                            width: double.infinity,
-                            height: 250,
-                          ),
-                    FlatButton(
+                body: SingleChildScrollView(
+                  child: Column(
+                    children: <Widget>[
+                      TextFormField(
+                        decoration: InputDecoration(hintText: 'イベントを入力してください'),
+                        onChanged: (val) {
+                          model.title = val;
+                        },
+                      ),
+                      SizedBox(
+                        height: 24,
+                      ),
+                      model.imageFile != null
+                          ? Image.file(model.imageFile)
+                          : Container(
+                              color: Colors.grey,
+                              width: double.infinity,
+                              height: 250,
+                            ),
+                      FlatButton(
                         color: Colors.red[200],
                         onPressed: () {
-                          _projectIconBottomSheet(context, model);
+                          selectImageBottomSheet(context, model);
                         },
-                        child: Text('画像を設定する'))
-                  ],
+                        child: Text('画像を設定する'),
+                      ),
+                      SizedBox(
+                        height: 100,
+                      ),
+                      FlatButton(
+                        color: Colors.red[200],
+                        onPressed: () async {
+                          model.startLoading();
+                          await model.create();
+                          Navigator.pop(context);
+                          model.endLoading();
+                        },
+                        child: Text('作成'),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               Consumer<ToDoScreenViewModel>(builder: (context, model, child) {
@@ -191,7 +257,121 @@ class _AddToDoState extends State<AddToDo> {
     );
   }
 
-  Future<void> _projectIconBottomSheet(
+  Future<void> selectImageBottomSheet(
+      BuildContext context, ToDoScreenViewModel model) async {
+    await showCupertinoModalPopup<void>(
+      context: context,
+      builder: (context) {
+        return CupertinoActionSheet(
+          actions: <Widget>[
+            CupertinoActionSheetAction(
+              child: Text(
+                'ライブラリから選択',
+                style: TextStyle(color: Colors.blue),
+              ),
+              onPressed: () async {
+                final pickedFile =
+                    await picker.getImage(source: ImageSource.gallery);
+                model.setImage(File(pickedFile.path));
+                Navigator.pop(context);
+              },
+            ),
+            CupertinoActionSheetAction(
+              child: Text(
+                'カメラ撮影',
+                style: TextStyle(color: Colors.blue),
+              ),
+              onPressed: () {
+                // getImage();
+              },
+            ),
+          ],
+          cancelButton: CupertinoActionSheetAction(
+            child: Text(
+              'キャンセル',
+              style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        );
+      },
+    );
+  }
+}
+
+class EditToDo extends StatelessWidget {
+  final ToDo todo;
+
+  EditToDo(this.todo);
+  final picker = ImagePicker();
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider<ToDoScreenViewModel>(
+      create: (_) => ToDoScreenViewModel(),
+      child: Consumer<ToDoScreenViewModel>(
+        builder: (context, model, child) {
+          return Stack(
+            children: <Widget>[
+              Scaffold(
+                appBar: AppBar(
+                  title: Text('更新'),
+                ),
+                body: Column(
+                  children: <Widget>[
+                    TextFormField(
+                      initialValue: todo.title,
+                      onChanged: (val) {
+                        model.title = val;
+                      },
+                    ),
+                    FlatButton(
+                      color: Colors.red[200],
+                      onPressed: () async {
+                        await model.update(todo.documentId, todo);
+                        Navigator.pop(context);
+                      },
+                      child: Text('更新'),
+                    ),
+                    SizedBox(
+                      height: 24,
+                    ),
+                    model.imageFile != null
+                        ? Image.file(model.imageFile)
+                        : Container(
+                            child: Image.network(todo.images),
+                            height: 250,
+                            width: double.infinity,
+                          ),
+                    FlatButton(
+                      color: Colors.red[200],
+                      onPressed: () {
+                        updateImageBottomSheet(context, model);
+                      },
+                      child: Text('画像を変更する'),
+                    )
+                  ],
+                ),
+              ),
+              Consumer<ToDoScreenViewModel>(builder: (context, model, child) {
+                return model.isLoading
+                    ? Container(
+                        color: Colors.black.withOpacity(0.3),
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      )
+                    : SizedBox();
+              }),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Future<void> updateImageBottomSheet(
       BuildContext context, ToDoScreenViewModel model) async {
     await showCupertinoModalPopup<void>(
       context: context,
@@ -230,45 +410,6 @@ class _AddToDoState extends State<AddToDo> {
           ),
         );
       },
-    );
-  }
-}
-
-class EditToDo extends StatelessWidget {
-  final String title;
-  final String documentId;
-
-  const EditToDo(this.title, this.documentId);
-  @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider<ToDoScreenViewModel>(
-      create: (_) => ToDoScreenViewModel(),
-      child: Consumer<ToDoScreenViewModel>(
-        builder: (context, model, child) {
-          return Scaffold(
-            appBar: AppBar(
-              title: Text('更新'),
-            ),
-            body: Column(
-              children: <Widget>[
-                TextFormField(
-                  initialValue: title,
-                  onChanged: (val) {
-                    model.title = val;
-                  },
-                ),
-                FlatButton(
-                  onPressed: () async {
-                    await model.update(documentId);
-                    Navigator.pop(context);
-                  },
-                  child: Text('更新'),
-                )
-              ],
-            ),
-          );
-        },
-      ),
     );
   }
 }
