@@ -184,6 +184,7 @@ class AddToDo extends StatefulWidget {
 }
 
 class _AddToDoState extends State<AddToDo> {
+  final _key = GlobalKey<FormState>();
   final picker = ImagePicker();
   @override
   Widget build(BuildContext context) {
@@ -198,45 +199,50 @@ class _AddToDoState extends State<AddToDo> {
                   title: Text('イベント新規作成'),
                 ),
                 body: SingleChildScrollView(
-                  child: Column(
-                    children: <Widget>[
-                      TextFormField(
-                        decoration: InputDecoration(hintText: 'イベントを入力してください'),
-                        onChanged: (val) {
-                          model.title = val;
-                        },
-                      ),
-                      SizedBox(
-                        height: 24,
-                      ),
-                      model.imageFile != null
-                          ? Image.file(model.imageFile)
-                          : Container(
-                              color: Colors.grey,
-                              width: double.infinity,
-                              height: 250,
-                            ),
-                      FlatButton(
-                        color: Colors.red[200],
-                        onPressed: () {
-                          selectImageBottomSheet(context, model);
-                        },
-                        child: Text('画像を設定する'),
-                      ),
-                      SizedBox(
-                        height: 100,
-                      ),
-                      FlatButton(
-                        color: Colors.red[200],
-                        onPressed: () async {
-                          model.startLoading();
-                          await model.create();
-                          Navigator.pop(context);
-                          model.endLoading();
-                        },
-                        child: Text('作成'),
-                      ),
-                    ],
+                  child: Form(
+                    key: _key,
+                    child: Column(
+                      children: <Widget>[
+                        TextFormField(
+                          decoration:
+                              InputDecoration(hintText: 'イベントを入力してください'),
+                          validator: (val) => val.isEmpty ? '入力してください' : null,
+                          onChanged: (val) {
+                            model.title = val;
+                          },
+                        ),
+                        SizedBox(
+                          height: 24,
+                        ),
+                        model.imageFile != null
+                            ? Image.file(model.imageFile)
+                            : Container(
+                                color: Colors.grey,
+                                width: double.infinity,
+                                height: 250,
+                              ),
+                        FlatButton(
+                          color: Colors.red[200],
+                          onPressed: () {
+                            selectImageBottomSheet(context, model);
+                          },
+                          child: Text('画像を設定する'),
+                        ),
+                        SizedBox(
+                          height: 100,
+                        ),
+                        FlatButton(
+                          color: Colors.red[200],
+                          onPressed: () async {
+                            model.startLoading();
+                            await model.create();
+                            Navigator.pop(context);
+                            model.endLoading();
+                          },
+                          child: Text('作成'),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

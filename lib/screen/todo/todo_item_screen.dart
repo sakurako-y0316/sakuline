@@ -59,18 +59,18 @@ class ToDoItemScreen extends StatelessWidget {
                         // ); //ここでフェッチ　したら、戻ると同時に更新する
                         // model.fetch(todoId);
                       },
-                      caption: '',
-                      color: Colors.blue,
+                      caption: '買い物',
+                      color: Colors.yellow,
                       icon: Icons.add_shopping_cart,
                     ),
                     IconSlideAction(
-                      color: Colors.orange,
-                      caption: '',
+                      color: Colors.yellow[800],
+                      caption: '持ち物',
                       icon: Icons.language,
                     ),
                     IconSlideAction(
-                      color: Colors.orange,
-                      caption: '',
+                      color: Colors.yellow[900],
+                      caption: 'その他',
                       icon: Icons.more,
                     )
                   ],
@@ -124,7 +124,7 @@ class ToDoItemScreen extends StatelessWidget {
                             Icons.check_circle,
                             color: Colors.red,
                           )
-                        : Text(''),
+                        : Icon(Icons.check_circle, color: Colors.grey[300]),
                     title: model.todoItem[index].done == true
                         ? Text(
                             model.todoItem[index].title,
@@ -151,6 +151,11 @@ class AddToDoItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _selectCategory = [
+      _SelectCategory(title: 'Shopping', image: ''),
+      _SelectCategory(title: 'Bring', image: ''),
+      _SelectCategory(title: 'Other', image: ''),
+    ];
     return ChangeNotifierProvider<ToDoItemScreemViewModel>(
       create: (_) => ToDoItemScreemViewModel()..fetch(todoId),
       child: Consumer<ToDoItemScreemViewModel>(
@@ -181,10 +186,16 @@ class AddToDoItem extends StatelessWidget {
                 SizedBox(
                   height: 50,
                 ),
-                FlatButton(
-                  color: Colors.red[200],
-                  onPressed: () {},
-                  child: Text('カテゴリーを選択する'),
+                Text('カテゴリーを選択する'),
+                Row(
+                  children: <Widget>[
+                    FlatButton(
+                      color: Colors.red[200],
+                      onPressed: () {},
+                      child: Text('Shopping'),
+                    ),
+                    Image.asset('lib/assets/images/shopping_cart.png')
+                  ],
                 ),
               ],
             ),
@@ -193,6 +204,13 @@ class AddToDoItem extends StatelessWidget {
       ),
     );
   }
+}
+
+class _SelectCategory {
+  final String title;
+  final String image;
+
+  _SelectCategory({this.title, this.image});
 }
 
 class EditToDoItem extends StatelessWidget {
