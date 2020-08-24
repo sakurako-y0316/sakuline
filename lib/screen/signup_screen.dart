@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sakura_line/screen/login_screen.dart';
+import 'package:sakura_line/screen/top_screen.dart';
 import 'package:sakura_line/view_model/signup_screen_view_model.dart';
-
-import 'top_screen.dart';
 
 class SignUpScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final mailController = TextEditingController();
-    final passwordController = TextEditingController();
+    final TextEditingController nameController = TextEditingController();
+    final TextEditingController mailController = TextEditingController();
+    final TextEditingController passwordController = TextEditingController();
 
     return ChangeNotifierProvider<SignUpScreenViewModel>(
       create: (_) => SignUpScreenViewModel(),
@@ -19,52 +19,27 @@ class SignUpScreen extends StatelessWidget {
         ),
         body: Consumer<SignUpScreenViewModel>(
             builder: (context, viewmodel, child) {
-          return SingleChildScrollView(
+          return Container(
+            padding: EdgeInsets.all(20),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                SizedBox(
-                  height: 350,
-                ),
-                Container(
-                  color: Colors.brown[200],
-                  height: 50,
-                  margin: EdgeInsets.only(left: 16, right: 16),
-                  child: TextField(
-                    onChanged: (text) {
-                      viewmodel.mail = text;
-                    },
-                    controller: mailController,
-                    decoration: InputDecoration(
-                      hintText: 'メールアドレス',
-                      border: InputBorder.none,
-                    ),
-                  ),
-                ),
-                Container(
-                  color: Colors.brown[200],
-                  height: 50,
-                  margin:
-                      EdgeInsets.only(left: 16, right: 16, top: 15, bottom: 15),
-                  child: TextField(
-                    onChanged: (text) {
-                      viewmodel.password = text;
-                    },
-                    controller: passwordController,
-                    decoration: InputDecoration(
-                      hintText: 'パスワード',
-                      border: InputBorder.none,
-                    ),
-                  ),
-                ),
+                _textForm(viewmodel, nameController, '名前'),
+                _textForm(viewmodel, mailController, 'メールアドレス'),
+                _textForm(viewmodel, passwordController, 'パスワード'),
                 Container(
                   width: double.infinity,
                   color: Colors.brown[700],
                   height: 50,
-                  margin: EdgeInsets.only(left: 16, right: 16),
+                  margin: EdgeInsets.only(bottom: 20),
                   child: FlatButton(
                     onPressed: () async {
                       try {
-                        await viewmodel.signUp();
+                        await viewmodel.signUp(
+                          nameController,
+                          mailController,
+                          passwordController,
+                        );
                         _showDialog(context, '登録完了しました');
                       } catch (e) {
                         _showDialog(context, e.toString());
@@ -75,7 +50,7 @@ class SignUpScreen extends StatelessWidget {
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
-                )
+                ),
               ],
             ),
           );
@@ -84,6 +59,28 @@ class SignUpScreen extends StatelessWidget {
     );
   }
 
+  //-----------------------------------------
+  // Formの共通化
+  //-----------------------------------------
+  Widget _textForm(SignUpScreenViewModel model,
+      TextEditingController controller, String title) {
+    return Container(
+      color: Colors.brown[200],
+      height: 50,
+      margin: EdgeInsets.only(bottom: 15),
+      child: TextFormField(
+        controller: controller,
+        decoration: InputDecoration(
+          hintText: title,
+          border: InputBorder.none,
+        ),
+      ),
+    );
+  }
+
+  //-----------------------------------------
+  // ダイアログ
+  //-----------------------------------------
   Future _showDialog(BuildContext context, String title) async {
     showDialog(
         context: context,
@@ -97,7 +94,7 @@ class SignUpScreen extends StatelessWidget {
                       context,
                       MaterialPageRoute<void>(
                         builder: (context) {
-                          return LoginScreen();
+                          return TopScreen();
                         },
                       ),
                     );
