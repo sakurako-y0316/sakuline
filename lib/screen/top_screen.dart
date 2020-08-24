@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:sakura_line/screen/home/mypage_screen.dart';
-
-import 'package:sakura_line/screen/talk_screen.dart';
+import 'package:sakura_line/screen/talk/talk_room.dart';
 import 'package:sakura_line/screen/timeline_screen.dart';
 import 'package:sakura_line/screen/todo/todo_screen.dart';
 import 'package:sakura_line/screen/todo/todo_screen.dart';
+
+import 'history/history.dart';
 
 class TopScreen extends StatefulWidget {
   @override
@@ -35,8 +36,8 @@ class _TopScreenState extends State<TopScreen> {
         onPageChanged: onchanged,
         children: <Widget>[
           MyPageScreen(),
-          TalkScreen(),
-          TimeLine(),
+          TalkRoomScreen(),
+          History(),
           ToDoScreen(),
         ],
       ),
@@ -51,11 +52,11 @@ class _TopScreenState extends State<TopScreen> {
           BottomNavigationBarItem(icon: Icon(Icons.send), title: Text('トーク')),
           BottomNavigationBarItem(
               icon: Icon(
-                Icons.favorite,
+                Icons.book,
               ),
-              title: Text('タイムライン')),
+              title: Text('ヒストリー')),
           BottomNavigationBarItem(
-              icon: Icon(Icons.event_available), title: Text('TODOリスト')),
+              icon: Icon(Icons.event_available), title: Text('TODOリスト'))
         ],
       ),
     );
