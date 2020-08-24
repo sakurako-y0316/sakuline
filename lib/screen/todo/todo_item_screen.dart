@@ -151,6 +151,7 @@ class AddToDoItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _key = GlobalKey<FormState>();
     final _selectCategory = [
       _SelectCategory(title: 'Shopping', image: ''),
       _SelectCategory(title: 'Bring', image: ''),
@@ -169,17 +170,23 @@ class AddToDoItem extends StatelessWidget {
                 SizedBox(
                   height: 20,
                 ),
-                TextFormField(
-                  decoration: InputDecoration(hintText: '内容を入力くだしてください'),
-                  onChanged: (val) {
-                    model.title = val;
-                  },
+                Form(
+                  key: _key,
+                  child: TextFormField(
+                    decoration: InputDecoration(hintText: '内容を入力くだしてください'),
+                    validator: (val) => val.isEmpty ? '入力してください' : null,
+                    onChanged: (val) {
+                      model.title = val;
+                    },
+                  ),
                 ),
                 FlatButton(
                   color: Colors.yellow,
                   onPressed: () async {
-                    await model.create(todoId);
-                    Navigator.pop(context);
+                    if (_key.currentState.validate()) {
+                      await model.create(todoId);
+                      Navigator.pop(context);
+                    }
                   },
                   child: Text('作成する'),
                 ),
@@ -217,8 +224,10 @@ class EditToDoItem extends StatelessWidget {
   final ToDoItem toDoItems;
 
   const EditToDoItem(this.toDoItems);
+
   @override
   Widget build(BuildContext context) {
+    final _key = GlobalKey<FormState>();
     return ChangeNotifierProvider<ToDoItemScreemViewModel>(
       create: (_) => ToDoItemScreemViewModel(),
       child: Consumer<ToDoItemScreemViewModel>(
@@ -227,24 +236,31 @@ class EditToDoItem extends StatelessWidget {
             appBar: AppBar(
               title: Text('TODOリストを編集'),
             ),
-            body: Column(
-              children: <Widget>[
-                TextFormField(
-                  initialValue: toDoItems.title,
-                  onChanged: (val) {
-                    model.title = val;
-                  },
-                ),
-                FlatButton(
-                  color: Colors.red[200],
-                  onPressed: () async {
-                    await model.update(
-                        todoItemId: toDoItems.todoItemId, toDoItem: toDoItems);
-                    Navigator.pop(context);
-                  },
-                  child: Text('更新する'),
-                ),
-              ],
+            body: Form(
+              key: _key,
+              child: Column(
+                children: <Widget>[
+                  TextFormField(
+                    initialValue: toDoItems.title,
+                    validator: (val) => val.isEmpty ? '入力してください' : null,
+                    onChanged: (val) {
+                      model.title = val;
+                    },
+                  ),
+                  FlatButton(
+                    color: Colors.red[200],
+                    onPressed: () async {
+                      if (_key.currentState.validate()) {
+                        await model.update(
+                            todoItemId: toDoItems.todoItemId,
+                            toDoItem: toDoItems);
+                        Navigator.pop(context);
+                      }
+                    },
+                    child: Text('更新する'),
+                  ),
+                ],
+              ),
             ),
           );
         },

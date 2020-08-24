@@ -234,10 +234,12 @@ class _AddToDoState extends State<AddToDo> {
                         FlatButton(
                           color: Colors.red[200],
                           onPressed: () async {
-                            model.startLoading();
-                            await model.create();
-                            Navigator.pop(context);
-                            model.endLoading();
+                            if (_key.currentState.validate()) {
+                              model.startLoading();
+                              await model.create();
+                              Navigator.pop(context);
+                              model.endLoading();
+                            }
                           },
                           child: Text('作成'),
                         ),
@@ -314,6 +316,7 @@ class EditToDo extends StatelessWidget {
   final picker = ImagePicker();
   @override
   Widget build(BuildContext context) {
+    final _key = GlobalKey<FormState>();
     return ChangeNotifierProvider<ToDoScreenViewModel>(
       create: (_) => ToDoScreenViewModel(),
       child: Consumer<ToDoScreenViewModel>(
@@ -324,40 +327,46 @@ class EditToDo extends StatelessWidget {
                 appBar: AppBar(
                   title: Text('更新'),
                 ),
-                body: Column(
-                  children: <Widget>[
-                    TextFormField(
-                      initialValue: todo.title,
-                      onChanged: (val) {
-                        model.title = val;
-                      },
-                    ),
-                    FlatButton(
-                      color: Colors.red[200],
-                      onPressed: () async {
-                        await model.update(todo.documentId, todo);
-                        Navigator.pop(context);
-                      },
-                      child: Text('更新'),
-                    ),
-                    SizedBox(
-                      height: 24,
-                    ),
-                    model.imageFile != null
-                        ? Image.file(model.imageFile)
-                        : Container(
-                            child: Image.network(todo.images),
-                            height: 250,
-                            width: double.infinity,
-                          ),
-                    FlatButton(
-                      color: Colors.red[200],
-                      onPressed: () {
-                        updateImageBottomSheet(context, model);
-                      },
-                      child: Text('画像を変更する'),
-                    )
-                  ],
+                body: Form(
+                  key: _key,
+                  child: Column(
+                    children: <Widget>[
+                      TextFormField(
+                        initialValue: todo.title,
+                        validator: (val) => val.isEmpty ? '入力してください' : null,
+                        onChanged: (val) {
+                          model.title = val;
+                        },
+                      ),
+                      FlatButton(
+                        color: Colors.red[200],
+                        onPressed: () async {
+                          if (_key.currentState.validate()) {
+                            await model.update(todo.documentId, todo);
+                            Navigator.pop(context);
+                          }
+                        },
+                        child: Text('更新'),
+                      ),
+                      SizedBox(
+                        height: 24,
+                      ),
+                      model.imageFile != null
+                          ? Image.file(model.imageFile)
+                          : Container(
+                              child: Image.network(todo.images),
+                              height: 250,
+                              width: double.infinity,
+                            ),
+                      FlatButton(
+                        color: Colors.red[200],
+                        onPressed: () {
+                          updateImageBottomSheet(context, model);
+                        },
+                        child: Text('画像を変更する'),
+                      )
+                    ],
+                  ),
                 ),
               ),
               Consumer<ToDoScreenViewModel>(builder: (context, model, child) {
