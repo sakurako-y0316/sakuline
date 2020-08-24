@@ -5,23 +5,28 @@ import 'package:flutter/material.dart';
 class SignUpScreenViewModel extends ChangeNotifier {
   String mail = '';
   String password = '';
+  String name = '';
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Future signUp() async {
-    if (mail.isEmpty) {
+  Future signUp(
+    TextEditingController name,
+    TextEditingController mail,
+    TextEditingController password,
+  ) async {
+    if (mail == null) {
       throw ('メールアドレスを入力してください');
     }
-    if (password.isEmpty) {
+    if (password == null) {
       throw ('パスワードを入力してください');
     }
 
-    print('今から登録します');
     //①SignInに成功したら、その認証結果を取得（ユーザー情報を含む認証情報が入っている）
-
     final AuthResult result = await _auth.createUserWithEmailAndPassword(
-        email: mail, password: password);
-    print('認証情報登録しました');
+      email: mail.text,
+      password: password.text,
+    );
+
     //②Authからユーザー情報(FirebaseUser)を取り出す
     FirebaseUser _user = result.user;
 
@@ -31,6 +36,7 @@ class SignUpScreenViewModel extends ChangeNotifier {
     //③ユーザー情報(FirebaseUser)からuid(user id = 乱数)を取得
     String _uid = _user.uid;
     String _email = _user.email;
+    String _name = name.text;
 
     //KBoyの方法（②と③をまとめてる）端末に保存
     // final uid = result.user.uid;
@@ -39,8 +45,8 @@ class SignUpScreenViewModel extends ChangeNotifier {
     await Firestore.instance.collection('user').document(_uid).setData({
       'uid': _uid,
       'email': _email,
+      'name': _name,
       'createdAt': Timestamp.now(),
     });
-    print('登録しました');
   }
 }
