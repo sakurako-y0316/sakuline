@@ -26,7 +26,7 @@ class TalkScreenViewModel extends ChangeNotifier {
   //------------------------
 
   List<Talk> talkList = [];
-  String talk;
+  // String talk;
   String fromUserName;
   String toUserName;
   String email;
@@ -63,6 +63,32 @@ class TalkScreenViewModel extends ChangeNotifier {
         .toList();
     this.talkList = talkList;
     this.loading = false;
+    notifyListeners();
+  }
+
+  //--------------------------------
+  // トーク追加後のfetch()
+  //--------------------------------
+  fetchTalk() async {
+    QuerySnapshot snapshot =
+        await talkCollection //中身はFirestore.instance.collection('talk');
+            .orderBy('createdAt') //並び替え条件
+            // .limit(3) //込み条件1
+            // .where('fromUserName', isEqualTo: 'shogo') //絞り込み条件1
+            // .where('toUserName', isEqualTo: 'shogo') //絞り込み条件2
+            // .where('toUserName', isEqualTo: 'sakurako') //絞り込み条件2
+            .getDocuments(); //QuerySnapshotを取得
+    List<Talk> talkList = snapshot.documents //DocumentSnapshotを順に取得
+        .map((doc) => Talk(
+              createdAt: doc.data['createdAt'].toDate(),
+              talk: doc.data['talk'],
+              uid: doc.data['uid'],
+              toUserName: doc.data['toUserName'],
+              fromUserName: doc.data['fromUserName'],
+            ))
+        .toList();
+    this.talkList = talkList;
+
     notifyListeners();
   }
 
@@ -108,7 +134,7 @@ class TalkScreenViewModel extends ChangeNotifier {
   //--------------------------------
   // Talkの追加
   //--------------------------------
-  addTalk() async {
+  addTalk(String talk) async {
     String random = randomAlphaNumeric(20);
     Timestamp date = Timestamp.now();
     _toUserName();
