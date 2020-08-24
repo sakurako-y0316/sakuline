@@ -29,9 +29,13 @@ class UploadImage extends StatelessWidget {
                           // TODO: カメラロールを開いて写真を選ぶ
                           final PickedFile pickedFile = await picker.getImage(
                               source: ImageSource.gallery);
-                          model.setImage(
-                            File(pickedFile.path),
-                          );
+                          try {
+                            model.setImage(
+                              File(pickedFile.path),
+                            );
+                          } catch (e) {
+                            print(e.toString());
+                          }
                         },
                         child: SizedBox(
                           child: model.imageFile != null

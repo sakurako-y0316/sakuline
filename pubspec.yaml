@@ -18,7 +18,6 @@ dependencies:
   intl: ^0.15.7
 
   flutter_slidable: ^0.5.5
-  image_picker: ^0.6.7+4
 
 
   freezed_annotation: ^0.11.0

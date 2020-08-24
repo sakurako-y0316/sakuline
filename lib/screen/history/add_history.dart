@@ -34,7 +34,13 @@ class AddHistory extends StatelessWidget {
                                   // TODO: カメラロール開いて写真選ぶ
                                   final pickedFile = await picker.getImage(
                                       source: ImageSource.gallery);
-                                  model.setImage(File(pickedFile.path));
+                                  try {
+                                    model.setImage(
+                                      File(pickedFile.path),
+                                    );
+                                  } catch (e) {
+                                    print(e.toString());
+                                  }
                                 },
                                 child: SizedBox(
                                   width: 160,
