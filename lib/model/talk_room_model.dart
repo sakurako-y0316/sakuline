@@ -1,6 +1,6 @@
 class TalkRoom {
   final String talkRoomId;
-  final List<String> memberId;
+  final List<dynamic> memberId;
   final String friendsName;
 
   TalkRoom({

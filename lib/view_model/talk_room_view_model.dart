@@ -32,8 +32,9 @@ class TalkRoomViewModel extends ChangeNotifier {
 
   List<User> userList = [];
   List<TalkRoom> roomList = [];
-  List<String> memberId = [];
+  List<dynamic> memberId = [];
   String friendsId;
+  String friendsName;
   bool isLoading = false;
 
   CollectionReference userCollection = Firestore.instance.collection('user');
@@ -43,22 +44,50 @@ class TalkRoomViewModel extends ChangeNotifier {
   //トークルームの取得
   Future<List<TalkRoom>> fetchRoom() async {
     try {
-      QuerySnapshot snapshot = await talkRoomCollection.getDocuments();
-      List<TalkRoom> roomList = snapshot.documents
-          .map(
-            (doc) => TalkRoom(
-              talkRoomId: doc.data['talkRoomId'],
-              memberId: doc.data['member'],
-            ),
-          )
+      //現在のユーザーのUID
+      FirebaseUser fbUser = await FirebaseAuth.instance.currentUser();
+      String fbUserId = fbUser.uid;
+
+      //UserModelの取得
+      QuerySnapshot userSnapshot = await userCollection.getDocuments();
+      List<User> userList = userSnapshot.documents
+          .map((doc) => User(
+                uid: doc.data['uid'],
+                name: doc.data['name'],
+              ))
           .toList();
+      this.userList = userList;
+
+      //TalkRoomModelの取得
+      QuerySnapshot roomSnapshot = await talkRoomCollection.getDocuments();
+      List<TalkRoom> roomList = roomSnapshot.documents
+          .map((doc) => TalkRoom(
+              talkRoomId: doc.data['talkRoomId'],
+              memberId: doc.data['memberId'],
+              friendsName:
+                  getFriendNameFromMemberId(doc.data['memberId'], fbUserId)))
+          .toList();
+
       this.roomList = roomList;
 
       notifyListeners();
       return roomList;
     } catch (e) {
-      print(e.toString());
+      print("エラー1${e.toString()}");
       return null;
+    }
+  }
+
+  //memberIdとuidが一致するユーザーを取得
+  String getFriendNameFromMemberId(
+      List<dynamic> memberId, String currentUserId) {
+    for (int i = 0; i < userList.length; i++) {
+      if (userList[i].uid == memberId[0] && userList[i].uid != currentUserId) {
+        return userList[i].name;
+      } else if (userList[i].uid == memberId[1] &&
+          userList[i].uid != currentUserId) {
+        return userList[i].name;
+      }
     }
   }
 
@@ -76,13 +105,18 @@ class TalkRoomViewModel extends ChangeNotifier {
           )
           .toList();
       this.userList = userList;
-
       notifyListeners();
       return userList;
     } catch (e) {
-      print(e.toString());
+      print("エラー2${e.toString()}");
       return null;
     }
+  }
+
+  //トークルームの削除
+  deleteRoom(String roomId) {
+    talkRoomCollection.document(roomId).delete();
+    notifyListeners();
   }
 
   addRoom(String friendsId) async {
@@ -97,11 +131,9 @@ class TalkRoomViewModel extends ChangeNotifier {
     this.memberId = [myId, friendsId];
     notifyListeners();
 
-    print('addしました');
     await talkRoomCollection
         .document(randomRoom)
         .setData({'talkRoomId': randomRoom, 'memberId': this.memberId});
     notifyListeners();
-    print('roomの登録完了');
   }
 }

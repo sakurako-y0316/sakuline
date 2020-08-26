@@ -38,6 +38,9 @@ class SignUpScreenViewModel extends ChangeNotifier {
     String _email = _user.email;
     String _name = name.text;
 
+    //④uidの先頭５文字を取得して、別途トークIDとして登録
+    String _talkId = _uid.substring(0, 5);
+
     //KBoyの方法（②と③をまとめてる）端末に保存
     // final uid = result.user.uid;
 
@@ -47,6 +50,7 @@ class SignUpScreenViewModel extends ChangeNotifier {
       'email': _email,
       'name': _name,
       'createdAt': Timestamp.now(),
+      'talkId': _talkId,
     });
   }
 }
