@@ -24,9 +24,17 @@ class TalkRoomScreen extends StatelessWidget {
                         Icons.person_pin,
                         size: 60,
                       ),
-                      title: model.roomList[index].talkRoomId != null
-                          ? Text(model.roomList[index].talkRoomId)
+                      title: model.roomList[index].friendsName != null
+                          ? Text(model.roomList[index].friendsName)
                           : Text('名無し'),
+                      trailing: IconButton(
+                        icon: Icon(Icons.delete),
+                        onPressed: () async {
+                          await model
+                              .deleteRoom(model.roomList[index].talkRoomId);
+                          model.fetchRoom();
+                        },
+                      ),
                       onTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
@@ -43,8 +51,8 @@ class TalkRoomScreen extends StatelessWidget {
             ),
             floatingActionButton: FloatingActionButton(
               child: Icon(Icons.person_add),
-              onPressed: () {
-                Navigator.of(context).push(
+              onPressed: () async {
+                await Navigator.of(context).push(
                   MaterialPageRoute(
                     fullscreenDialog: true,
                     builder: (context) {
@@ -52,6 +60,7 @@ class TalkRoomScreen extends StatelessWidget {
                     },
                   ),
                 );
+                model.fetch();
               },
             ),
           );
@@ -89,7 +98,6 @@ class AddTalkRoom extends StatelessWidget {
                           ? Text(model.userList[index].email)
                           : Text('匿名メール'),
                       onTap: () async {
-                        print('push');
                         await model.addRoom(model.userList[index].uid);
                         Navigator.pop(context);
                         // Navigator.push(
