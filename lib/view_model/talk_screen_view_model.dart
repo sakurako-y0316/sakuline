@@ -33,8 +33,8 @@ class TalkScreenViewModel extends ChangeNotifier {
 
   bool loading = false;
 
-  TalkScreenViewModel() {
-    fetch();
+  TalkScreenViewModel(String talkRoomId) {
+    fetch(talkRoomId);
   }
 
   CollectionReference talkCollection = Firestore.instance.collection('talk');
@@ -42,55 +42,63 @@ class TalkScreenViewModel extends ChangeNotifier {
   //--------------------------------
   // ドキュメント一覧を取得
   //--------------------------------
-  fetch() async {
-    this.loading = true;
-    QuerySnapshot snapshot =
-        await talkCollection //中身はFirestore.instance.collection('talk');
-            .orderBy('createdAt') //並び替え条件
-            // .limit(3) //込み条件1
-            // .where('fromUserName', isEqualTo: 'shogo') //絞り込み条件1
-            // .where('toUserName', isEqualTo: 'shogo') //絞り込み条件2
-            // .where('toUserName', isEqualTo: 'sakurako') //絞り込み条件2
-            .getDocuments(); //QuerySnapshotを取得
-    List<Talk> talkList = snapshot.documents //DocumentSnapshotを順に取得
-        .map((doc) => Talk(
-              createdAt: doc.data['createdAt'].toDate(),
-              talk: doc.data['talk'],
-              uid: doc.data['uid'],
-              toUserName: doc.data['toUserName'],
-              fromUserName: doc.data['fromUserName'],
-            ))
-        .toList();
-    this.talkList = talkList;
-    this.loading = false;
+  void fetch(String talkRoomId) async {
+    // this.loading = true;
+
+    //使用ユーザーIDを取得
+    FirebaseUser currentUser = await FirebaseAuth.instance.currentUser();
+    String currentUserId = currentUser.uid;
+
+    try {
+      QuerySnapshot snapshot =
+          await talkCollection //中身はFirestore.instance.collection('talk');
+              // .limit(3) //込み条件1
+              .where('talkRoomId', isEqualTo: talkRoomId) //絞り込み条件1
+              // .orderBy('createdAt') //並び替え条件
+              .getDocuments(); //QuerySnapshotを取得
+
+      List<Talk> talkList = snapshot.documents //DocumentSnapshotを順に取得
+          .map((doc) => Talk(
+                createdAt: doc.data['createdAt'].toDate(),
+                talk: doc.data['talk'],
+                talkId: doc.data['talkId'],
+                senderUserId: doc.data['senderUserId'],
+                yourSend:
+                    doc.data['senderUserId'] == currentUserId ? true : false,
+              ))
+          .toList();
+      this.talkList = talkList;
+    } catch (e) {
+      print(e.toString());
+      //何もしない
+    }
+    // this.loading = false;
+
     notifyListeners();
   }
 
   //--------------------------------
   // トーク追加後のfetch()
   //--------------------------------
-  fetchTalk() async {
-    QuerySnapshot snapshot =
-        await talkCollection //中身はFirestore.instance.collection('talk');
-            .orderBy('createdAt') //並び替え条件
-            // .limit(3) //込み条件1
-            // .where('fromUserName', isEqualTo: 'shogo') //絞り込み条件1
-            // .where('toUserName', isEqualTo: 'shogo') //絞り込み条件2
-            // .where('toUserName', isEqualTo: 'sakurako') //絞り込み条件2
-            .getDocuments(); //QuerySnapshotを取得
-    List<Talk> talkList = snapshot.documents //DocumentSnapshotを順に取得
-        .map((doc) => Talk(
-              createdAt: doc.data['createdAt'].toDate(),
-              talk: doc.data['talk'],
-              uid: doc.data['uid'],
-              toUserName: doc.data['toUserName'],
-              fromUserName: doc.data['fromUserName'],
-            ))
-        .toList();
-    this.talkList = talkList;
+  // fetchTalk(String talkRoomId) async {
+  //   QuerySnapshot snapshot =
+  //       await talkCollection //中身はFirestore.instance.collection('talk');
+  //           .orderBy('createdAt') //並び替え条件
+  //           // .limit(3) //込み条件1
+  //           .where('talkRoomId', isEqualTo: talkRoomId) //絞り込み条件1
+  //           .getDocuments(); //QuerySnapshotを取得
+  //   List<Talk> talkList = snapshot.documents //DocumentSnapshotを順に取得
+  //       .map((doc) => Talk(
+  //             createdAt: doc.data['createdAt'].toDate(),
+  //             talk: doc.data['talk'],
+  //             talkId: doc.data['talkId'],
+  //             senderUserId: doc.data['senderUserId'],
+  //           ))
+  //       .toList();
+  //   this.talkList = talkList;
 
-    notifyListeners();
-  }
+  //   notifyListeners();
+  // }
 
   //--------------------------------
   // ユーザーIDの取得
@@ -134,33 +142,30 @@ class TalkScreenViewModel extends ChangeNotifier {
   //--------------------------------
   // Talkの追加
   //--------------------------------
-  addTalk(String talk) async {
+  Future<void> addTalk(String talkRoomId, String talk) async {
     String random = randomAlphaNumeric(20);
-    Timestamp date = Timestamp.now();
-    _toUserName();
-    await talkCollection.document(random).setData({
-      'createdAt': date,
-      'talk': talk,
-      'uid': random,
-      'fromUserName': fromUserName,
-      'toUserName': toUserName,
-    });
-    notifyListeners();
-  }
 
-  void _toUserName() {
-    if (fromUserName == 'shogo') {
-      toUserName = 'sakurako';
-    } else {
-      toUserName = 'shogo';
-    }
+    //送信者のユーザー情報を取得
+    FirebaseUser currentUser = await FirebaseAuth.instance.currentUser();
+    String userId = currentUser.uid;
+
+    //Firestoreに登録
+    await talkCollection.document(random).setData({
+      'createdAt': Timestamp.now(),
+      'talk': talk,
+      'talkId': random,
+      'senderUserId': userId,
+      "talkRoomId": talkRoomId
+    });
+
+    notifyListeners();
   }
 
   //--------------------------------
   // Talkの削除
   //--------------------------------
-  deleteTalk(String uid) async {
-    await talkCollection.document(uid).delete();
+  deleteTalk(String talkId) async {
+    await talkCollection.document(talkId).delete();
     notifyListeners();
   }
 }

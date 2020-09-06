@@ -4,10 +4,13 @@ import 'package:sakura_line/screen/talk/talk_screen.dart';
 import 'package:sakura_line/view_model/talk_room_view_model.dart';
 
 class TalkRoomScreen extends StatelessWidget {
+  //----------------------------------------
+  // トーク一覧画面
+  //----------------------------------------
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<TalkRoomViewModel>(
-      create: (_) => TalkRoomViewModel()..fetchRoom(),
+      create: (_) => TalkRoomViewModel(),
       child: Consumer<TalkRoomViewModel>(
         builder: (context, model, child) {
           return Scaffold(
@@ -39,7 +42,9 @@ class TalkRoomScreen extends StatelessWidget {
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) {
-                              return TalkScreen();
+                              return TalkScreen(
+                                  model.roomList[index].friendsName,
+                                  model.roomList[index].talkRoomId);
                             },
                           ),
                         );
@@ -60,7 +65,7 @@ class TalkRoomScreen extends StatelessWidget {
                     },
                   ),
                 );
-                model.fetch();
+                model.fetchRoom();
               },
             ),
           );
@@ -70,11 +75,14 @@ class TalkRoomScreen extends StatelessWidget {
   }
 }
 
+//----------------------------------------
+// トーク追加画面
+//----------------------------------------
 class AddTalkRoom extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<TalkRoomViewModel>(
-      create: (_) => TalkRoomViewModel()..fetch(),
+      create: (_) => TalkRoomViewModel(),
       child: Consumer<TalkRoomViewModel>(
         builder: (context, model, child) {
           return Scaffold(
@@ -100,14 +108,6 @@ class AddTalkRoom extends StatelessWidget {
                       onTap: () async {
                         await model.addRoom(model.userList[index].uid);
                         Navigator.pop(context);
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) {
-                        //       return TalkScreen();
-                        //     },
-                        //   ),
-                        // );
                       },
                     ),
                   );
